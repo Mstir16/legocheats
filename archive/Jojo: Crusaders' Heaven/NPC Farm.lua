@@ -1,28 +1,31 @@
 getgenv().NPCFarm = true
-local NPCName = "Thug"
+local NPCName = "DIO"
 local speed = 200
 
 if getgenv().Noclipping ~= nil then getgenv().Noclipping:Disconnect() end
 local attacks = {"Barrage","Heavy Punch","M1"}
 getgenv().Noclipping = nil
 
-
 local function Tween(target)
-    local info = TweenInfo.new((target.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude / speed, Enum.EasingStyle.Linear)
-    local Tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, info, {CFrame = target})
-    Debounce = true
-    Tween:Play()
-    Tween.Completed:Wait()
-    Debounce = false
+    pcall(function()
+        local info = TweenInfo.new((target.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude / speed, Enum.EasingStyle.Linear)
+        local Tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, info, {CFrame = target})
+        Debounce = true
+        Tween:Play()
+        Tween.Completed:Wait()
+        Debounce = false
+    end)
 end
 
 local function NPCTween(target)
-    local info = TweenInfo.new((target.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude / speed, Enum.EasingStyle.Linear)
-    local Tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, info, {CFrame = target + target.lookVector * -6})
-    Debounce = true
-    Tween:Play()
-    Tween.Completed:Wait()
-    Debounce = false
+    pcall(function()
+        local info = TweenInfo.new((target.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude / speed, Enum.EasingStyle.Linear)
+        local Tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, info, {CFrame = target + target.lookVector * -6})
+        Debounce = true
+        Tween:Play()
+        Tween.Completed:Wait()
+        Debounce = false
+    end)
 end
 
 if Noclipping == nil and NPCFarm then
