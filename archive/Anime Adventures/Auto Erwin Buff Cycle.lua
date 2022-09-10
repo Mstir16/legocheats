@@ -1,4 +1,10 @@
---getgenv().erwinCycle = true
+--[[
+
+getgenv().erwinCycle = true
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Mstir16/legocheats/main/archive/Anime%20Adventures/Auto%20Erwin%20Buff%20Cycle.lua"))()
+
+]]--
+
 
 local units = game:GetService("Workspace")["_UNITS"]
 local erwins
