@@ -1,6 +1,6 @@
 --[[
 getgenv().CharismaAutoPaster = true
-
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Mstir16/legocheats/main/archive/Deepwoken/CharismaAutoPaster.lua"))()
 ]]--
 
 
