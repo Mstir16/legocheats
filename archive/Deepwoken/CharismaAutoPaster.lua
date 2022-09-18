@@ -4,7 +4,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Mstir16/legocheats/ma
 ]]--
 
 
-while wait(1) do
+while wait() do
     if CharismaAutoPaster then
         if game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("SimplePrompt") then
             local Prompt = game.Players.LocalPlayer.PlayerGui:FindFirstChild("SimplePrompt").Prompt.Text
@@ -25,7 +25,7 @@ while wait(1) do
             for i,v in pairs(Lines) do
                 if string.find(Prompt,v) then
                     setclipboard(v)
-                    StarterGui:SetCore("SendNotification", {
+                    game.StarterGui:SetCore("SendNotification", {
                         Title = "Charisma Auto Paster",
                         Text = "Copied Phrase!",
                         Duration = 2,
@@ -37,7 +37,7 @@ while wait(1) do
             
             repeat
                 local check = game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("SimplePrompt")
-                wait(1)
+                wait()
             until check == nil
         end
     else
