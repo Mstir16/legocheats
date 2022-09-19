@@ -1,3 +1,4 @@
+--loadstring(game:HttpGet("https://raw.githubusercontent.com/Mstir16/legocheats/main/archive/Blox%20Fruits/script.lua"))()
 repeat wait() until game:IsLoaded() and game.Players.LocalPlayer.Character ~= nil
 
 if getgenv().MU == true then return end
