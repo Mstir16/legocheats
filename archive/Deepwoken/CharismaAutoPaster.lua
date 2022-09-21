@@ -30,7 +30,7 @@ while wait() do
                         Text = "Copied Phrase!",
                         Duration = 2,
                     })
-                    wait(1)
+                    wait()
                     break
                 end
             end
