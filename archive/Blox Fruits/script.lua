@@ -1,9 +1,11 @@
 --loadstring(game:HttpGet("https://raw.githubusercontent.com/Mstir16/legocheats/main/archive/Blox%20Fruits/script.lua"))()
-repeat wait() until game:IsLoaded() and game.Players.LocalPlayer.Character ~= nil
+repeat wait() until game:IsLoaded() and game.Players.LocalPlayer.Character ~= nil and game.Players.LocalPlayer:FindFirstChild("PlayerGui") ~= nil
 
 pcall(function()
-    for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.PlayerGui.Main.ChooseTeam.Container.Pirates.Frame.ViewportFrame.TextButton.MouseButton1Click)) do
-        v.Function() 
+    if game.Players.LocalPlayer.PlayerGui.Main:FindFirstChild("ChooseTeam") then
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam","Pirates")
+        game.Players.LocalPlayer.PlayerGui.Main:FindFirstChild("ChooseTeam"):Destroy()
+        workspace.Camera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
     end
 end)
 
