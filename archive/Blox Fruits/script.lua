@@ -497,6 +497,8 @@ coroutine.resume(coroutine.create(function()
                             v.Function() 
                         end
                         wait(1)
+                        local vim = game:GetService("VirtualInputManager")
+                        vim:SendMouseButtonEvent(0, 500, 0, true, game, 1)
                     end
                 end
             end
@@ -533,6 +535,8 @@ coroutine.resume(coroutine.create(function()
                             v.Function() 
                         end
                         wait(1)
+                        local vim = game:GetService("VirtualInputManager")
+                        vim:SendMouseButtonEvent(0, 500, 0, true, game, 1)
                     end
                 end
             end
