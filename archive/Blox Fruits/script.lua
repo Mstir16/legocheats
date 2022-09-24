@@ -292,7 +292,7 @@ itemf:Toggle(
 
 itemf:Toggle(
     "Serverhop After Getting All Fruits:",
-    BFConfig.Features.Serverhop,
+    BFConfig.Serverhop,
     function(bool)
         BFConfig.Serverhop = bool
         AppendConfig()
