@@ -1,21 +1,28 @@
 --loadstring(game:HttpGet("https://raw.githubusercontent.com/Mstir16/legocheats/main/archive/Blox%20Fruits/script.lua"))()
 repeat wait() until game:IsLoaded() and game.Players.LocalPlayer.Character ~= nil
 
-if getgenv().MU == true then return end
 pcall(function()
-    getgenv().MU = true
+    for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.PlayerGui.Main.ChooseTeam.Container.Pirates.Frame.ViewportFrame.TextButton.MouseButton1Click)) do
+        v.Function() 
+    end
 end)
 
 --// Lib Stuff \\--
 local DiscordLib = loadstring(game:HttpGet "https://raw.githubusercontent.com/Forever4D/Lib/main/DiscordLib2.lua")()
 local win = DiscordLib:Window("Mstir's Utilities: Blox Fruits")
 local serv = win:Server("UI Version 1.0.0","http://www.roblox.com/asset/?id=6031075938")
-local farm = serv:Channel("Farming")
+local lvlf = serv:Channel("Leveling")
+local itemf = serv:Channel("Fruit/etc")
+local misc = serv:Channel("Misc")
 
 --// Config \\--
 local BFConfig = {
     EnemySelected = nil,
     TweenSpeed = 300,
+    BusoBind = Enum.KeyCode.G,
+    ObvBind = Enum.KeyCode.H,
+    ObservationRad = 10,
+    Serverhop = false,
     Features = {
         EnemyAutofarm = false,
         ChestFarm = false,
@@ -23,13 +30,16 @@ local BFConfig = {
         FruitESP = false,
         FruitFarm = false,
         AutoQuest = false,
-        PUDropped = false,
         InfEnergy = false,
         AutoSkills = false,
     },
+    BoatConfig = {
+        MaxSpeed = nil,
+        Torque = nil,
+    },
 }
 
-function ReadConfig()
+local function ReadConfig()
     local fileData = readfile("/Mstir Utilities/Blox_Fruits_"..game.Players.LocalPlayer.UserId..".json")
     local data = game:GetService("HttpService"):JSONDecode(fileData)
     
@@ -44,7 +54,7 @@ function ReadConfig()
     end
 end
 
-function AppendConfig()
+local function AppendConfig()
     local data = game:GetService("HttpService"):JSONEncode(BFConfig)
     writefile("/Mstir Utilities/Blox_Fruits_"..game.Players.LocalPlayer.UserId..".json",data)
 end
@@ -173,10 +183,18 @@ local function DrawLibTxt(item)
     end)
 end
 
---// FARMING TAB \\--
+local function GetPlayerBoat()
+    for i,v in pairs(game:GetService("Workspace").Boats:GetChildren()) do
+        if tostring(v.Owner.Value) == game.Players.LocalPlayer.Name then
+            return v
+        end
+    end
+end
+
+--// LEVELIING TAB \\--
 
 local sldr =
-    farm:Slider(
+    lvlf:Slider(
     "Tween Speed",
     0,
     500,
@@ -187,7 +205,7 @@ local sldr =
     end
 )
 
-farm:Toggle(
+lvlf:Toggle(
     "Enemy Auto-Farm (AutoClick: U):",
     BFConfig.Features.EnemyAutofarm,
     function(bool)
@@ -197,7 +215,7 @@ farm:Toggle(
 )
 
 local EnemyPicker =
-    farm:Dropdown(
+    lvlf:Dropdown(
     "Enemy Selector",
     {"click button","below to","refresh"},
     BFConfig.EnemySelected,
@@ -208,7 +226,7 @@ local EnemyPicker =
     end
 )
 
-farm:Button(
+lvlf:Button(
     "Refresh Enemy Picker DD",
     function()
         EnemyPicker:Clear()
@@ -223,7 +241,7 @@ farm:Button(
     end
 )
 
-farm:Toggle(
+lvlf:Toggle(
     "Auto-Quest(WIP):",
     BFConfig.Features.AutoQuest,
     function(bool)
@@ -232,9 +250,9 @@ farm:Toggle(
     end
 )
 
-farm:Seperator()
+lvlf:Seperator()
 
-farm:Toggle(
+lvlf:Toggle(
     "Auto Skills:",
     BFConfig.Features.AutoSkills,
     function(bool)
@@ -243,7 +261,7 @@ farm:Toggle(
     end
 )
 
-farm:Toggle(
+itemf:Toggle(
     "Chest Farm:",
     BFConfig.Features.ChestFarm,
     function(bool)
@@ -252,7 +270,7 @@ farm:Toggle(
     end
 )
 
-farm:Toggle(
+itemf:Toggle(
     "Chest ESP:",
     BFConfig.Features.ChestESP,
     function(bool)
@@ -261,7 +279,9 @@ farm:Toggle(
     end
 )
 
-farm:Toggle(
+itemf:Seperator()
+
+itemf:Toggle(
     "Fruit Farm:",
     BFConfig.Features.FruitFarm,
     function(bool)
@@ -270,16 +290,18 @@ farm:Toggle(
     end
 )
 
-farm:Toggle(
-    "Pick Up Dropped Fruits:",
-    BFConfig.Features.PUDropped,
+itemf:Toggle(
+    "Serverhop After Getting All Fruits:",
+    BFConfig.Features.Serverhop,
     function(bool)
-        BFConfig.Features.PUDropped = bool
+        BFConfig.Serverhop = bool
         AppendConfig()
     end
 )
 
-farm:Toggle(
+itemf:Seperator()
+
+itemf:Toggle(
     "Fruit ESP:",
     BFConfig.Features.FruitESP,
     function(bool)
@@ -288,7 +310,7 @@ farm:Toggle(
     end
 )
 
-farm:Toggle(
+misc:Toggle(
     "Inf Energy:",
     BFConfig.Features.InfEnergy,
     function(bool)
@@ -297,12 +319,100 @@ farm:Toggle(
     end
 )
 
-farm:Button(
-    "Toggle Buso Haki",
+misc:Bind(
+    "Buso Haki Bind",
+    BFConfig.BusoBind,
     function()
+        pcall(function()
+            game.Players.LocalPlayer.Character.Buso:Destroy()
+        end)
+        
         game.ReplicatedStorage.Remotes.CommF_:InvokeServer("Buso");
+        AppendConfig()
     end
 )
+
+misc:Bind(
+    "Observation Haki Bind",
+    BFConfig.ObvBind,
+    function()
+        pcall(function()
+            game.Players.LocalPlayer.Character.Observation:Destroy()
+        end)
+        
+        local kenhaki = getgenv().ken
+
+        if kenhaki == nil then
+            kenhaki = require(game:GetService("ReplicatedStorage").ObservationManager).new(game.Players.LocalPlayer);
+            getgenv().ken = kenhaki
+        end
+        
+        kenhaki:setActive(not kenhaki.active)
+        if kenhaki.active == true then
+            kenhaki.radius = 1000
+            game.ReplicatedStorage.Remotes.CommE:FireServer("Ken",kenhaki.active);
+        else
+            kenhaki.radius = 0
+            game.ReplicatedStorage.Remotes.CommE:FireServer("Ken",kenhaki.active);
+        end
+        
+        AppendConfig()
+    end
+)
+
+misc:Slider(
+    "Observation Haki Radius",
+    0,
+    50,
+    BFConfig.ObservationRad,
+    function(t)
+        BFConfig.ObservationRad = t
+        AppendConfig()
+    end
+)
+
+misc:Textbox(
+    "Boat Max Speed",
+    "Integer",
+    true,
+    function(t)
+        local number = tonumber(t)
+        
+        if number ~= nil then
+            BFConfig.BoatConfig.MaxSpeed = number
+        end
+    end
+)
+
+misc:Textbox(
+    "Boat Torque",
+    "Integer",
+    true,
+    function(t)
+        local number = tonumber(t)
+        
+        if number ~= nil then
+            BFConfig.BoatConfig.Torque = number
+        end
+    end
+)
+
+misc:Button(
+    "Edit Boat Stats",
+    function()
+        local MyBoat = GetPlayerBoat()
+
+        if MyBoat then
+            for i,v in pairs(BFConfig.BoatConfig) do
+                if v ~= nil then
+                    print("Edited ",i," with the value: ",v)
+                    MyBoat.VehicleSeat[i] = v
+                end
+            end
+        end
+    end
+)
+
 
 --// Scripts \\--
 
@@ -316,23 +426,6 @@ coroutine.resume(coroutine.create(function()
                     
                     Tween(Chest.CFrame)
                     wait(0.1)
-                end
-            end
-        end
-    end
-end))
-
---// Pick up Dropped Items \\--
-coroutine.resume(coroutine.create(function()
-    while task.wait() do
-        if BFConfig.Features.PUDropped then
-            if workspace:FindFirstChildOfClass("Tool") then
-                local tool = workspace:FindFirstChildOfClass("Tool")
-                local handle =  tool:FindFirstChild("Handle")
-                
-                if handle ~= nil then
-                    Tween(handle.CFrame)
-                    wait(1)
                 end
             end
         end
@@ -369,12 +462,75 @@ coroutine.resume(coroutine.create(function()
         if BFConfig.Features.FruitFarm then
             for i,v in pairs(workspace:GetChildren()) do
                 if v:IsA("Model") and string.find(v.Name,"Fruit") and BFConfig.Features.FruitFarm then
-                    print('found')
                     local Fruit = v
                     
                     Tween(Fruit.Handle.CFrame)
                     wait(0.1)
+                    for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                        if v:FindFirstChild("Fruit") and v:FindFirstChild("Keep") then
+                            Fruit = v
+                            Fruit.Parent = game.Players.LocalPlayer.Character
+                        end
+                    end
+                    
+                    Fruit = nil
+
+                    for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+                        if v:FindFirstChild("Fruit") and v:FindFirstChild("Keep") then
+                            Fruit = v
+                            print(Fruit.Name)
+                        end
+                    end
+                    
+                    if Fruit ~= nil then
+                        Fruit:Activate()
+                        wait(1.5)
+                        for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.PlayerGui.Main.Dialogue.Option3.MouseButton1Click)) do
+                            v.Function() 
+                        end
+                        wait(1)
+                    end
                 end
+            end
+            
+            if workspace:FindFirstChildOfClass("Tool") then
+                local tool = workspace:FindFirstChildOfClass("Tool")
+                local toolName = tool.Name:split("Fruit")[1]
+                toolName = toolName.."-"..toolName
+                local handle = tool:FindFirstChild("Handle")
+                
+                if handle ~= nil then
+                    Tween(handle.CFrame)
+                    wait(0.1)
+                    local Fruit = nil
+                    
+                    for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                        if v:FindFirstChild("Fruit") and v:FindFirstChild("Keep") then
+                            Fruit = v
+                            Fruit.Parent = game.Players.LocalPlayer.Character
+                        end
+                    end
+
+                    for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+                        if v:FindFirstChild("Fruit") and v:FindFirstChild("Keep") then
+                            Fruit = v
+                            print(Fruit.Name)
+                        end
+                    end
+                    
+                    if Fruit ~= nil then
+                        Fruit:Activate()
+                        wait(1.5)
+                        for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.PlayerGui.Main.Dialogue.Option3.MouseButton1Click)) do
+                            v.Function() 
+                        end
+                        wait(1)
+                    end
+                end
+            end
+            
+            if BFConfig.Serverhop == true and workspace:FindFirstChild("Fruit ") == nil and workspace:FindFirstChildOfClass("Tool") == nil then
+                game:shutdown()
             end
         end
     end
