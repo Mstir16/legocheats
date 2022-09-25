@@ -547,3 +547,4 @@ Text = "GUI Already Loaded"; -- what the text says (ofc)
 Duration = 5; -- how long the notification should in secounds
 })
 end
+
