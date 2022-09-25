@@ -6,7 +6,7 @@ floatpad.Anchored = true
 floatpad.Transparency = 1
 floatpad.Name = "FloatPad"
 
-local loadedscript = game:HttpGet("https://raw.githubusercontent.com/Boxking776/kocmoc/main/functions/viciousbeeserverhop.lua")
+local loadedscript = game:HttpGet("https://raw.githubusercontent.com/Mstir16/legocheats/main/archive/General/K2vl91pxVn/C")
 
 noclip = false
 local farmVici = false
