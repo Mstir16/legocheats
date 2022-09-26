@@ -1,5 +1,11 @@
--- getgenv().MAGS = true
--- getgenv().MAGDISTANCE = 17
+--[[
+
+getgenv().MAGS = true
+getgenv().MAGDISTANCE = 17
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Mstir16/legocheats/main/archive/Football%20Fusion%202/mags.lua"))()
+
+]]--
 
 if getgenv().MAGS == nil or getgenv().MAGDISTANCE == nil then return end
 
