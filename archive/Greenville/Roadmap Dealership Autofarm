@@ -96,7 +96,7 @@ while task.wait() do
         SimulateClick(RMSelect.Content.Selection["Color"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("ColorLine").Text).Button)
         print(RMInfo.Sticker:FindFirstChild("RimLine").Text)
         if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Seats") then RMInfo.Sticker:FindFirstChild("RimLine").Text = "Base" end
-        if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Rims") then RMInfo.Sticker:FindFirstChild("RimLine").Text = RMInfo.Sticker:FindFirstChild("RimLine").Text:split(" ")[1] end
+        if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Rims") then RMInfo.Sticker:FindFirstChild("RimLine").Text = RMInfo.Sticker:FindFirstChild("RimLine").Text:gsub(" Rims","") end
         SimulateClick(RMSelect.Content.Selection["Rims"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("RimLine").Text).Button)
         wait()
         SimulateClick(RMSelect.Content.Selection.Offer)
