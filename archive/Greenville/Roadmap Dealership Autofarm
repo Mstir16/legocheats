@@ -80,7 +80,9 @@ while task.wait() do
     if Customer == nil then
         task.wait()
     elseif Customer and Customer:FindFirstChild("Following") == nil and RMInfo.Visible == false then
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Customer.HumanoidRootPart.CFrame
+        pcall(function()
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Customer.HumanoidRootPart.CFrame
+        end)
     end
     
     if RMInfo.Visible == true and Customer and Customer:FindFirstChild("Following") == nil then
