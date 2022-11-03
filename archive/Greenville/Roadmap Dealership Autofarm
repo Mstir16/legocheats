@@ -1,0 +1,104 @@
+--getgenv().DealerAutoFarm = true
+
+function GetMyClient()
+    for i,v in pairs(game:GetService("Workspace").Workplaces.Roadmap.NPCs:GetChildren()) do
+        if v:FindFirstChild("HumanoidRootPart") then
+            local roadmapUI = v.HumanoidRootPart:FindFirstChild("RoadmapBubble")
+            
+            if roadmapUI.Active == true then
+                return v 
+            end
+        end
+    end
+    return nil
+end
+
+function PathFind(destin)
+    -- SERVICES
+    local PFS = game:GetService("PathfindingService")
+    
+    -- PATH OBJECT
+    local path = PFS:CreatePath()
+    local hum = game.Players.LocalPlayer.Character.Humanoid
+    
+    local currentPosition = destin
+    local success, errorMsg = pcall(function()
+    	path:ComputeAsync(game.Players.LocalPlayer.Character.Torso.Position, currentPosition.Position)
+    end)
+    
+    if success and path.Status == Enum.PathStatus.Success then
+    	local waypoints = path:GetWaypoints()
+    	
+    	for _, waypoint in pairs(waypoints) do
+    		if waypoint.Action == Enum.PathWaypointAction.Jump and hum.Jump == false then
+    			hum.Jump = true
+    			wait()
+    			hum.Jump = false
+    		end
+    		
+    		hum:MoveTo(waypoint.Position)
+    		hum.MoveToFinished:Wait()
+    	end
+    	return true
+    elseif path.Status == Enum.PathStatus.NoPath then
+    	print("No possible path")
+    	return nil
+    else
+    	warn("Failed to compute path: ", errorMsg)
+    	return nil
+    end
+end
+
+function SimulateClick(button)
+    pcall(function()
+        local events = {"MouseButton1Click", "MouseButton1Down", "Activated"}
+        for i,v in pairs(events) do
+            for i,v in pairs(getconnections(button[v])) do
+                v:Fire()
+            end
+        end
+    end)
+end
+
+SimulateClick(game:GetService("Players").LocalPlayer.PlayerGui.UI.Uni.Hud.Navbar.Jobs)
+wait(0.1)
+SimulateClick(game:GetService("Players").LocalPlayer.PlayerGui.UI.Uni.Interfaces.Jobs.Content.JobList["AAAAARoadmap Dealership Worker"])
+wait(0.1)
+SimulateClick(game:GetService("Players").LocalPlayer.PlayerGui.UI.Uni.Interfaces.Jobs.Content.JobInfo.SelectJob)
+wait(0.1)
+SimulateClick(game:GetService("Players").LocalPlayer.PlayerGui.UI.Uni.Interfaces.Jobs.Content.Topbar.CloseBtn)
+
+local mandatory = {"CarName","BodyLine","ColorLine","RimLine"}
+local RMInfo = game.Players.LocalPlayer.PlayerGui.UI.Uni.Interfaces:WaitForChild("RoadmapPrompt")
+local RMSelect = game.Players.LocalPlayer.PlayerGui.UI.Uni.Interfaces:WaitForChild("RoadmapSelector")
+local DealerDesk = CFrame.new(-1584.6438, -78.7340851, -11441.627, 0.982321501, -6.77301983e-08, 0.187201723, 6.93381992e-08, 1, -2.04167616e-09, -0.187201723, 1.49858117e-08, 0.982321501)
+
+while task.wait() do
+    if DealerAutoFarm ~= true then return end
+    local Customer = GetMyClient()
+    
+    if Customer == nil then
+        task.wait()
+    elseif Customer and Customer:FindFirstChild("Following") == nil and RMInfo.Visible == false then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Customer.HumanoidRootPart.CFrame
+    end
+    
+    if RMInfo.Visible == true and Customer and Customer:FindFirstChild("Following") == nil then
+        SimulateClick(RMInfo.Content.Ok.Button)
+        local IsFollowing = Instance.new("BoolValue",Customer)
+        IsFollowing.Name = "Following"
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = DealerDesk
+    end
+    
+    if RMSelect.Visible == true and Customer and Customer:FindFirstChild("Following") then
+        SimulateClick(RMSelect.Content.Selection["Model"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("CarName").Text).Button)
+        SimulateClick(RMSelect.Content.Selection["Trim"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("BodyLine").Text).Button)
+        SimulateClick(RMSelect.Content.Selection["Color"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("ColorLine").Text).Button)
+        print(RMInfo.Sticker:FindFirstChild("RimLine").Text)
+        if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Seats") then RMInfo.Sticker:FindFirstChild("RimLine").Text = "Base" end
+        if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Rims") then RMInfo.Sticker:FindFirstChild("RimLine").Text = RMInfo.Sticker:FindFirstChild("RimLine").Text:split(" ")[1] end
+        SimulateClick(RMSelect.Content.Selection["Rims"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("RimLine").Text).Button)
+        wait()
+        SimulateClick(RMSelect.Content.Selection.Offer)
+    end
+end
