@@ -60,6 +60,8 @@ function SimulateClick(button)
     end)
 end
 
+
+
 SimulateClick(game:GetService("Players").LocalPlayer.PlayerGui.UI.Uni.Hud.Navbar.Jobs)
 wait(0.1)
 SimulateClick(game:GetService("Players").LocalPlayer.PlayerGui.UI.Uni.Interfaces.Jobs.Content.JobList["AAAAARoadmap Dealership Worker"])
@@ -72,6 +74,14 @@ local mandatory = {"CarName","BodyLine","ColorLine","RimLine"}
 local RMInfo = game.Players.LocalPlayer.PlayerGui.UI.Uni.Interfaces:WaitForChild("RoadmapPrompt")
 local RMSelect = game.Players.LocalPlayer.PlayerGui.UI.Uni.Interfaces:WaitForChild("RoadmapSelector")
 local DealerDesk = CFrame.new(-1584.6438, -78.7340851, -11441.627, 0.982321501, -6.77301983e-08, 0.187201723, 6.93381992e-08, 1, -2.04167616e-09, -0.187201723, 1.49858117e-08, 0.982321501)
+
+function GetRims(rimstickerName)
+    for i,v in pairs(RMSelect.Content.Selection["Rims"].DropDownList.List:GetChildren()) do
+        if v.Name:find(rimstickerName) then
+            return v.Button
+        end
+    end
+end
 
 while task.wait() do
     if DealerAutoFarm ~= true then return end
@@ -99,7 +109,7 @@ while task.wait() do
         print(RMInfo.Sticker:FindFirstChild("RimLine").Text)
         if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Seats") then RMInfo.Sticker:FindFirstChild("RimLine").Text = "Base" end
         if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Rims") then RMInfo.Sticker:FindFirstChild("RimLine").Text = RMInfo.Sticker:FindFirstChild("RimLine").Text:gsub(" Rims","") end
-        SimulateClick(RMSelect.Content.Selection["Rims"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("RimLine").Text).Button)
+        SimulateClick(GetRims(RMInfo.Sticker:FindFirstChild("RimLine").Text))
         wait()
         SimulateClick(RMSelect.Content.Selection.Offer)
     end
