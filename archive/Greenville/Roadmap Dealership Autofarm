@@ -90,33 +90,35 @@ function GetRims(rimstickerName)
 end
 
 while task.wait() do
-    if DealerAutoFarm ~= true then return end
-    local Customer = GetMyClient()
-    
-    if Customer == nil then
-        task.wait()
-    elseif Customer and Customer:FindFirstChild("Following") == nil and RMInfo.Visible == false then
-        pcall(function()
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Customer.HumanoidRootPart.CFrame
-        end)
-    end
-    
-    if RMInfo.Visible == true and Customer and Customer:FindFirstChild("Following") == nil then
-        SimulateClick(RMInfo.Content.Ok.Button)
-        local IsFollowing = Instance.new("BoolValue",Customer)
-        IsFollowing.Name = "Following"
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = DealerDesk
-    end
-    
-    if RMSelect.Visible == true and Customer and Customer:FindFirstChild("Following") then
-        print(RMInfo.Sticker:FindFirstChild("CarName").Text,RMInfo.Sticker:FindFirstChild("BodyLine").Text,RMInfo.Sticker:FindFirstChild("ColorLine").Text,RMInfo.Sticker:FindFirstChild("RimLine").Text)
-        SimulateClick(RMSelect.Content.Selection["Model"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("CarName").Text).Button)
-        SimulateClick(RMSelect.Content.Selection["Trim"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("BodyLine").Text).Button)
-        SimulateClick(RMSelect.Content.Selection["Color"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("ColorLine").Text).Button)
-        if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Seats") then RMInfo.Sticker:FindFirstChild("RimLine").Text = "Base" end
-        if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Rims") then RMInfo.Sticker:FindFirstChild("RimLine").Text = RMInfo.Sticker:FindFirstChild("RimLine").Text:gsub(" Rims","") end
-        SimulateClick(GetRims(RMInfo.Sticker:FindFirstChild("RimLine").Text))
-        wait()
-        SimulateClick(RMSelect.Content.Selection.Offer)
-    end
+    pcall(function()
+        if DealerAutoFarm ~= true then return end
+        local Customer = GetMyClient()
+        
+        if Customer == nil then
+            task.wait()
+        elseif Customer and Customer:FindFirstChild("Following") == nil and RMInfo.Visible == false then
+            pcall(function()
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Customer.HumanoidRootPart.CFrame
+            end)
+        end
+        
+        if RMInfo.Visible == true and Customer and Customer:FindFirstChild("Following") == nil then
+            SimulateClick(RMInfo.Content.Ok.Button)
+            local IsFollowing = Instance.new("BoolValue",Customer)
+            IsFollowing.Name = "Following"
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = DealerDesk
+        end
+        
+        if RMSelect.Visible == true and Customer and Customer:FindFirstChild("Following") then
+            print(RMInfo.Sticker:FindFirstChild("CarName").Text,RMInfo.Sticker:FindFirstChild("BodyLine").Text,RMInfo.Sticker:FindFirstChild("ColorLine").Text,RMInfo.Sticker:FindFirstChild("RimLine").Text)
+            SimulateClick(RMSelect.Content.Selection["Model"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("CarName").Text).Button)
+            SimulateClick(RMSelect.Content.Selection["Trim"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("BodyLine").Text).Button)
+            SimulateClick(RMSelect.Content.Selection["Color"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("ColorLine").Text).Button)
+            if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Seats") then RMInfo.Sticker:FindFirstChild("RimLine").Text = "Base" end
+            if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Rims") then RMInfo.Sticker:FindFirstChild("RimLine").Text = RMInfo.Sticker:FindFirstChild("RimLine").Text:gsub(" Rims","") end
+            SimulateClick(GetRims(RMInfo.Sticker:FindFirstChild("RimLine").Text))
+            wait()
+            SimulateClick(RMSelect.Content.Selection.Offer)
+        end
+    end)
 end
