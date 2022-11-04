@@ -77,6 +77,12 @@ local DealerDesk = CFrame.new(-1584.6438, -78.7340851, -11441.627, 0.982321501, 
 
 function GetRims(rimstickerName)
     for i,v in pairs(RMSelect.Content.Selection["Rims"].DropDownList.List:GetChildren()) do
+        if v.Name == rimstickerName then
+            return v.Button
+        end
+    end
+    
+    for i,v in pairs(RMSelect.Content.Selection["Rims"].DropDownList.List:GetChildren()) do
         if v.Name:find(rimstickerName) then
             return v.Button
         end
@@ -103,10 +109,10 @@ while task.wait() do
     end
     
     if RMSelect.Visible == true and Customer and Customer:FindFirstChild("Following") then
+        print(RMInfo.Sticker:FindFirstChild("CarName").Text,RMInfo.Sticker:FindFirstChild("BodyLine").Text,RMInfo.Sticker:FindFirstChild("ColorLine").Text,RMInfo.Sticker:FindFirstChild("RimLine").Text)
         SimulateClick(RMSelect.Content.Selection["Model"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("CarName").Text).Button)
         SimulateClick(RMSelect.Content.Selection["Trim"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("BodyLine").Text).Button)
         SimulateClick(RMSelect.Content.Selection["Color"].DropDownList.List:FindFirstChild(RMInfo.Sticker:FindFirstChild("ColorLine").Text).Button)
-        print(RMInfo.Sticker:FindFirstChild("RimLine").Text)
         if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Seats") then RMInfo.Sticker:FindFirstChild("RimLine").Text = "Base" end
         if RMInfo.Sticker:FindFirstChild("RimLine").Text:find("Rims") then RMInfo.Sticker:FindFirstChild("RimLine").Text = RMInfo.Sticker:FindFirstChild("RimLine").Text:gsub(" Rims","") end
         SimulateClick(GetRims(RMInfo.Sticker:FindFirstChild("RimLine").Text))
