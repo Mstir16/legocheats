@@ -1,5 +1,5 @@
-getgenv().NPCFarm = true
-local NPCName = "DIO"
+-- getgenv().NPCFarm = true
+-- getgenv().NPCName = "DIO"
 local speed = 200
 
 if getgenv().Noclipping ~= nil then getgenv().Noclipping:Disconnect() end
@@ -56,9 +56,9 @@ while wait() do
     if NPCFarm then
         if game:GetService("Workspace").Enemies:FindFirstChild(NPCName) ~= nil then
             pcall(function()
-                NPCTween(game:GetService("Workspace").Enemies:FindFirstChild(NPCName).HumanoidRootPart.CFrame)
+                NPCTween(game:GetService("Workspace").Enemies:FindFirstChild(getgenv().NPCName).HumanoidRootPart.CFrame)
                 repeat
-                    local NPC = game:GetService("Workspace").Enemies:FindFirstChild(NPCName)
+                    local NPC = game:GetService("Workspace").Enemies:FindFirstChild(getgenv().NPCName)
                     
                     if NPC ~= nil then
                         coroutine.resume(coroutine.create(function()
