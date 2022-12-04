@@ -1,6 +1,6 @@
 if getgenv().Noclipping ~= nil then getgenv().Noclipping:Disconnect() end
 --// Settings \\--
-getgenv().ItemFarm = true
+--getgenv().ItemFarm = true
 getgenv().Noclipping = nil
 local speed = 200
 
