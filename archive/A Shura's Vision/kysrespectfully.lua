@@ -328,8 +328,9 @@ end
 
 AutoBuyShakeFunc = function()
     while AutoBuyShake and task.wait() do
-       plr.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Purchaseables2["Protein Shake $75"].Head.CFrame
-       fireclickdetector(game:GetService("Workspace").Purchaseables2["Protein Shake $75"].ClickDetector) 
+       plr.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Purchaseables2["Protein Shake $80"].Head.CFrame
+       task.wait()
+       fireclickdetector(game:GetService("Workspace").Purchaseables2["Protein Shake $80"].ClickDetector) 
     end
 end
 
