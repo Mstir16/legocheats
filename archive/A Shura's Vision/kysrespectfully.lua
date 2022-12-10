@@ -298,7 +298,7 @@ AutoSleepFunc = function()
 	end
 
 	while AutoSleep and task.wait() do
-		if Fatigue >= 80 then
+		if Fatigue >= 60 then
 			if game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored ~= true then
 				disableAll()
 				local bed = GetABed()
