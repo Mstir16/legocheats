@@ -289,6 +289,14 @@ local function GetBenchSeat()
     end
 end
 
+local function GetItem(name)
+   for i,v in pairs(game:GetService("Workspace").Purchaseables2:GetDescendants()) do
+       if v.Name:find(name) and v:IsA("Model") then
+            return v 
+       end
+   end
+end
+
 --// Feature Functions \\--
 
 
@@ -352,8 +360,9 @@ AutoVanillaFunc = function()
 end
 
 AutoBuyShakeFunc = function()
+    local Shake = GetItem("Protein Shake")
+	
     while AutoBuyShake and task.wait() do
-       local Shake = game:GetService("Workspace").Purchaseables2["Protein Shake $80"]
        local distance = (plr.Character.HumanoidRootPart.Position - Shake.Head.Position).magnitude
        
        if distance > 7 then plr.Character.HumanoidRootPart.CFrame = Shake.Head.CFrame task.wait(0.2) continue end
