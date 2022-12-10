@@ -389,6 +389,11 @@ AutoSleepFunc = function()
 	    local Fatigue = plr.Stats.Fatigue.Value
 	    
 		if Fatigue >= MaxFatigue then
+		    if plr.Character.Humanoid.SeatPart ~= nil then
+		         plr.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+		         task.wait(0.2)
+		    end
+		    
 			if plr.Character.HumanoidRootPart.Anchored ~= true then
 				disableAll()
 				local bed = GetABed()
