@@ -5,10 +5,12 @@ local AutoTreadmill = false
 local AutoVanilla = false
 local AutoBuyShake = false
 local MoneyFarm = false
+local AutoSleep = false
 local AutoTreadFunc
 local AutoMoneyFunc
 local AutoVanillaFunc
 local AutoBuyShakeFunc
+local AutoSleepFunc
 
 --// LIB \\--
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
@@ -45,7 +47,7 @@ local A = main.Toggle({
 })
 
 
-local E = main.Slider({
+local G = main.Slider({
 	Text = "Minimum Stamina",
 	Callback = function(Value)
 		MinStam = Value
@@ -71,8 +73,23 @@ local B = main.Toggle({
 	Enabled = AutoTreadmill
 })
 
-
 local C = main.Toggle({
+	Text = "Auto Sleep",
+	Callback = function(Value)
+		AutoSleep = Value
+		
+		if AutoSleep then
+		   task.spawn(function()
+		       pcall(function()
+		            AutoSleepFunc()
+		       end)
+		   end)
+		end
+	end,
+	Enabled = AutoSleep
+})
+
+local D = main.Toggle({
 	Text = "Auto Vanilla Shakes",
 	Callback = function(Value)
 		AutoVanilla = Value
@@ -89,7 +106,7 @@ local C = main.Toggle({
 })
 
 
-local D = main.Toggle({
+local E = main.Toggle({
 	Text = "Auto Buy Vanilla Shakes",
 	Callback = function(Value)
 		AutoBuyShake = Value
@@ -259,5 +276,37 @@ AutoMoneyFunc = function()
 		fireclickdetector(jobCD)
 		task.wait(0.1)
 	    end 
+	end
+end
+
+AutoSleepFunc = function()
+    	local Fatigue = game:GetService("Players").LocalPlayer.Stats.Fatigue.Value
+
+	function disableAll()
+	     	E:SetState(false)
+		D:SetState(false)
+		B:SetState(false)
+		A:SetState(false)
+	end
+
+	function GetABed()
+	    for i,v in pairs(workspace:GetChildren()) do
+		if v:FindFirstChild("Hospital Bed") then
+		    return v:FindFirstChild("Hospital Bed")
+		end
+	    end
+	end
+
+	while AutoSleep and task.wait() do
+		if Fatigue >= 80 then
+			if game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored ~= true then
+				disableAll()
+				local bed = GetABed()
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = bed.ActivePart.CFrame
+				task.wait(0.4)
+				fireclickdetector(bed.ClickDetector)
+				task.wait(10)
+			end
+	    end
 	end
 end
