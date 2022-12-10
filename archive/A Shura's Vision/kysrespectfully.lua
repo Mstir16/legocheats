@@ -457,7 +457,9 @@ AutoCSTFunc = function()
        
        if CSTCheck == nil and CSTUI.Enabled ~= true or CSTCheck ~= nil and CSTUI.Enabled ~= true and AutoCST then
           if CSTCheck == nil then
-	      plr.Character.HumanoidRootPart.CFrame = CSTCF
+	      local distance = (plr.Character.HumanoidRootPart.Position - CSTCF.Position).magnitude
+       
+              if distance > 10 then plr.Character.HumanoidRootPart.CFrame = CSTCF task.wait(0.2) continue end
        	      task.wait(0.1)
               fireclickdetector(CSTCD,10)
           end
