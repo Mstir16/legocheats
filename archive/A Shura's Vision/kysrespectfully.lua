@@ -362,7 +362,7 @@ AutoBuyShakeFunc = function()
        
        plr.Character.HumanoidRootPart.CFrame = Shake.Head.CFrame
        task.wait()
-       fireclickdetector(Shake.ClickDetector,5
+       fireclickdetector(Shake.ClickDetector,5)
     end
 end
 
