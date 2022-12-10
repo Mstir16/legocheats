@@ -327,13 +327,15 @@ AutoVanillaFunc = function()
 end
 
 AutoBuyShakeFunc = function()
-    plr.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Purchaseables2["Protein Shake $80"].Head.CFrame
-    task.wait(0.1)
-	
     while AutoBuyShake and task.wait() do
-       plr.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Purchaseables2["Protein Shake $80"].Head.CFrame
+       local Shake = game:GetService("Workspace").Purchaseables2["Protein Shake $80"]
+       local distance = (plr.Character.HumanoidRootPart.Position - Shake.Head.Position).magnitude
+       
+       if distance > 7 then plr.Character.HumanoidRootPart.CFrame = Shake.Head.CFrame task.wait(0.2) continue end
+       
+       plr.Character.HumanoidRootPart.CFrame = Shake.Head.CFrame
        task.wait()
-       fireclickdetector(game:GetService("Workspace").Purchaseables2["Protein Shake $80"].ClickDetector) 
+       fireclickdetector(Shake.ClickDetector,5
     end
 end
 
