@@ -8,12 +8,14 @@ local AutoBuyShake = false
 local MoneyFarm = false
 local AutoSleep = false
 local AutoCST = false
+local AutoBench = false
 local AutoTreadFunc
 local AutoMoneyFunc
 local AutoVanillaFunc
 local AutoBuyShakeFunc
 local AutoSleepFunc
 local AutoCSTFunc
+local AutoBenchFunc
 
 --// LIB \\--
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
@@ -36,8 +38,9 @@ local main = X.New({
 
 --// MAIN TAB \\--
 
+local UIToggles = {}
 
-local A = main.Toggle({
+UIToggles["A"] = main.Toggle({
 	Text = "Money Farm",
 	Callback = function(Value)
 		MoneyFarm = Value
@@ -64,8 +67,7 @@ local MinStamSlide = main.Slider({
 	Def = MinStam
 })
 
-
-local B = main.Toggle({
+UIToggles["B"] = main.Toggle({
 	Text = "Auto Treadmill",
 	Callback = function(Value)
 		AutoTreadmill = Value
@@ -81,7 +83,7 @@ local B = main.Toggle({
 	Enabled = AutoTreadmill
 })
 
-local F = main.Toggle({
+UIToggles["F"] = main.Toggle({
 	Text = "Auto Combat Speed",
 	Callback = function(Value)
 		AutoCST = Value
@@ -95,6 +97,22 @@ local F = main.Toggle({
 		end
 	end,
 	Enabled = AutoCST
+})
+
+UIToggles["G"] = main.Toggle({
+	Text = "Auto Benchpress",
+	Callback = function(Value)
+		AutoBench = Value
+		
+		if AutoBench then
+		   task.spawn(function()
+		       pcall(function()
+		            AutoBenchFunc()
+		       end)
+		   end)
+		end
+	end,
+	Enabled = AutoBench
 })
 
 local MaxFatigueSlide = main.Slider({
@@ -123,7 +141,7 @@ local C = main.Toggle({
 	Enabled = AutoSleep
 })
 
-local D = main.Toggle({
+UIToggles["D"] = main.Toggle({
 	Text = "Auto Vanilla Shakes",
 	Callback = function(Value)
 		AutoVanilla = Value
@@ -140,7 +158,7 @@ local D = main.Toggle({
 })
 
 
-local E = main.Toggle({
+UIToggles["E"] = main.Toggle({
 	Text = "Auto Buy Vanilla Shakes",
 	Callback = function(Value)
 		AutoBuyShake = Value
@@ -162,11 +180,12 @@ local E = main.Toggle({
 --// Helpful Functions \\--
 
 local function disableAll()
+    G:SetState(false)
     F:SetState(false)
     E:SetState(false)
-	D:SetState(false)
-	B:SetState(false)
-	A:SetState(false)
+    D:SetState(false)
+    B:SetState(false)
+    A:SetState(false)
 end
 
 local function IsFatigueMax()
@@ -261,6 +280,14 @@ local function GetABed()
     	if v:FindFirstChild("Hospital Bed") then
     	    return v:FindFirstChild("Hospital Bed")
     	end
+    end
+end
+
+local function GetBenchSeat()
+    for i,v in pairs(workspace["Benchpress Seats"]:GetChildren()) do
+        if v.Occupant == nil then
+            return v 
+        end
     end
 end
 
@@ -410,4 +437,32 @@ AutoCSTFunc = function()
           task.wait(0.5)
        end
     end
+end
+	
+AutoBenchFunc = function()
+    	local Seat = GetBenchSeat()
+	local BenchUI = plr.PlayerGui:FindFirstChild("MinigameGui")
+
+
+	while AutoBench and task.wait() do
+	    if BenchUI.Enabled == true and BenchUI.KeyToPress.TextTransparency == 0 and BenchUI.KeyToPress.TextColor3 == Color3.fromRGB(255,255,255) and AutoBench then
+		if BenchUI.KeyToPress.TextColor3 == Color3.fromRGB(255,255,255) and BenchUI.KeyToPress.TextColor3 ~= Color3.fromRGB(255,0,0) then
+		    task.wait(0.1)
+		    local vim = game:GetService("VirtualInputManager")
+		    vim:SendKeyEvent(true, BenchUI.KeyToPress.Text, false, game)
+		    repeat task.wait(0.1) until BenchUI.KeyToPress.TextColor3 == Color3.fromRGB(255,255,255) or AutoBench == false
+		    continue
+		end
+	    end
+
+	    if StaminaStatus() == "recharge" and AutoBench then
+		repeat task.wait() until StaminaStatus() == "max"
+		continue
+	    end
+
+	    if Seat.Occupant == nil and AutoBench then
+		plr.Character.HumanoidRootPart.CFrame = CFrame.new(Seat.CFrame.X + math.random(0,1),Seat.CFrame.Y + math.random(1,3),Seat.CFrame.Z - math.random(0,1))
+		continue
+	    end
+	end
 end
