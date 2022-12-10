@@ -1,5 +1,5 @@
 --// VARS \\--
-local plr = plr
+local plr = game.Players.LocalPlayer
 local MinStam = 20
 local MaxFatigue = 60
 local AutoTreadmill = false
