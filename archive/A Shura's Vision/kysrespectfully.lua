@@ -457,7 +457,7 @@ AutoCSTFunc = function()
        
        if CSTCheck == nil and CSTUI.Enabled ~= true or CSTCheck ~= nil and CSTUI.Enabled ~= true and AutoCST then
           if CSTCheck == nil then
-	      local distance = (plr.Character.HumanoidRootPart.Position - CSTCF.Position).magnitude
+	          local distance = (plr.Character.HumanoidRootPart.Position - CSTCF.Position).magnitude
        
               if distance > 10 then plr.Character.HumanoidRootPart.CFrame = CSTCF task.wait(0.2) continue end
        	      task.wait(0.1)
