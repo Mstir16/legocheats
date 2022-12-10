@@ -180,12 +180,10 @@ UIToggles["E"] = main.Toggle({
 --// Helpful Functions \\--
 
 local function disableAll()
-    G:SetState(false)
-    F:SetState(false)
-    E:SetState(false)
-    D:SetState(false)
-    B:SetState(false)
-    A:SetState(false)
+    for i,v in pairs(UIToggles) do
+        local toggleletter = i
+        v:SetState(false)
+    end
 end
 
 local function IsFatigueMax()
