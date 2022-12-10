@@ -39,6 +39,7 @@ local main = X.New({
 --// MAIN TAB \\--
 
 local UIToggles = {}
+local preenabled = {}
 
 UIToggles["A"] = main.Toggle({
 	Text = "Money Farm",
@@ -181,16 +182,46 @@ UIToggles["E"] = main.Toggle({
 
 local function disableAll()
     for i,v in pairs(UIToggles) do
+        local currentState = v:GetState()
         local toggleletter = i
+        
+        if currentState == true then
+            table.insert(preenabled,#preenabled+1,toggleletter) 
+        end
         v:SetState(false)
     end
 end
+
+local function enableCached()
+    for letter,toggle in pairs(UIToggles) do
+        for i,v in pairs(preenabled) do
+            if letter == v then
+                toggle:SetState(true) 
+            end
+        end
+    end
+    preenabled = {}
+end
+
+local reenablefunc = nil
 
 local function IsFatigueMax()
     local Fatigue = plr.Stats.Fatigue.Value
     
     if Fatigue >= MaxFatigue then
         disableAll()
+        coroutine.resume(coroutine.create(function()
+            if reenablefunc == nil then
+                reenablefunc = true
+                repeat 
+                    task.wait() 
+                    local FatigueCheck = plr.Stats.Fatigue.Value
+                until FatigueCheck <= 0
+                enableCached()
+                task.wait(1)
+                reenablefunc = nil
+            end
+        end))
         return true
     else
         return nil
