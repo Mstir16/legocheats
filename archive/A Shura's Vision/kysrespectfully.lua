@@ -327,6 +327,9 @@ AutoVanillaFunc = function()
 end
 
 AutoBuyShakeFunc = function()
+    plr.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Purchaseables2["Protein Shake $80"].Head.CFrame
+    task.wait(0.1)
+	
     while AutoBuyShake and task.wait() do
        plr.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Purchaseables2["Protein Shake $80"].Head.CFrame
        task.wait()
@@ -379,8 +382,6 @@ AutoCSTFunc = function()
     while AutoCST and task.wait() do
        local CSTUI = plr.PlayerGui:FindFirstChild("MinigameGui")
        local CSTCheck = plr.Backpack:FindFirstChild("Combat Speed Training")
-       
-       
        
        if CSTCheck == nil and CSTUI.Enabled ~= true or CSTCheck ~= nil and CSTUI.Enabled ~= true and AutoCST then
           if CSTCheck == nil then
