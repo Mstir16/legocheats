@@ -1,16 +1,19 @@
 --// VARS \\--
-local plr = game.Players.LocalPlayer
+local plr = plr
 local MinStam = 20
+local MaxFatigue = 60
 local AutoTreadmill = false
 local AutoVanilla = false
 local AutoBuyShake = false
 local MoneyFarm = false
 local AutoSleep = false
+local AutoCST = false
 local AutoTreadFunc
 local AutoMoneyFunc
 local AutoVanillaFunc
 local AutoBuyShakeFunc
 local AutoSleepFunc
+local AutoCSTFunc
 
 --// LIB \\--
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
@@ -30,6 +33,10 @@ local main = X.New({
 	Title = "MAIN"
 })
 
+
+--// MAIN TAB \\--
+
+
 local A = main.Toggle({
 	Text = "Money Farm",
 	Callback = function(Value)
@@ -47,7 +54,7 @@ local A = main.Toggle({
 })
 
 
-local G = main.Slider({
+local MinStamSlide = main.Slider({
 	Text = "Minimum Stamina",
 	Callback = function(Value)
 		MinStam = Value
@@ -56,6 +63,7 @@ local G = main.Slider({
 	Max = plr.Stats.MaxStamina.Value,
 	Def = MinStam
 })
+
 
 local B = main.Toggle({
 	Text = "Auto Treadmill",
@@ -71,6 +79,32 @@ local B = main.Toggle({
 		end
 	end,
 	Enabled = AutoTreadmill
+})
+
+local F = main.Toggle({
+	Text = "Auto Combat Speed",
+	Callback = function(Value)
+		AutoCST = Value
+		
+		if AutoCST then
+		   task.spawn(function()
+		       pcall(function()
+		            AutoCSTFunc()
+		       end)
+		   end)
+		end
+	end,
+	Enabled = AutoCST
+})
+
+local MaxFatigueSlide = main.Slider({
+	Text = "Maximum Fatigue",
+	Callback = function(Value)
+		MaxFatigue = Value
+	end,
+	Min = 0,
+	Max = 100,
+	Def = MaxFatigue
 })
 
 local C = main.Toggle({
@@ -122,11 +156,37 @@ local E = main.Toggle({
 	Enabled = AutoBuyShake
 })
 
+--\\ END OF MAIN TAB //--
 
-AutoTreadFunc = function()
-   local plr = game:GetService("Players").LocalPlayer
 
-function GetClosestTreadmill()
+--// Helpful Functions \\--
+
+local function disableAll()
+    F:SetState(false)
+    E:SetState(false)
+	D:SetState(false)
+	B:SetState(false)
+	A:SetState(false)
+end
+
+local function IsFatigueMax()
+    local Fatigue = plr.Stats.Fatigue.Value
+    
+    if Fatigue >= MaxFatigue then
+        disableAll()
+        return true
+    else
+        return nil
+    end
+end
+
+coroutine.resume(coroutine.create(function()
+    while task.wait() do
+        IsFatigueMax()
+    end
+end))
+
+local function GetClosestTreadmill()
     local collection = {}
     
     for i,v in pairs(game:GetService("Workspace").Treadmills:GetChildren()) do
@@ -147,7 +207,7 @@ function GetClosestTreadmill()
     end
 end
 
-function SimulateClick(button)
+local function SimulateClick(button)
     pcall(function()
         local events = {"MouseButton1Click", "MouseButton1Down", "Activated"}
         for i,v in pairs(events) do
@@ -158,14 +218,14 @@ function SimulateClick(button)
     end)
 end
 
-function ToggleRun()
+local function ToggleRun()
     function run()
-        game:GetService("Players").LocalPlayer.PlayerGui.Client.InputEvent:FireServer("StartRun")
-        game:GetService("Players").LocalPlayer.PlayerGui.Client.InputEvent:FireServer("StartRun")
+        plr.PlayerGui.Client.InputEvent:FireServer("StartRun")
+        plr.PlayerGui.Client.InputEvent:FireServer("StartRun")
     end
     
     function stop()
-        game:GetService("Players").LocalPlayer.PlayerGui.Client.InputEvent:FireServer("StopRun") 
+        plr.PlayerGui.Client.InputEvent:FireServer("StopRun") 
     end
     
     if plr.Character:FindFirstChild("Humanoid").WalkSpeed > 16 then
@@ -175,7 +235,7 @@ function ToggleRun()
     end
 end
 
-function StaminaStatus()
+local function StaminaStatus()
     local stamina = plr.Stats.Stamina.Value
     local maxstamina = plr.Stats.MaxStamina.Value
 
@@ -188,54 +248,76 @@ function StaminaStatus()
     end
 end
 
-local treadmill = GetClosestTreadmill()
-local TMCD = treadmill:FindFirstChild("Conveyor").ClickDetector
+local function Touch(part)
+   if firetouchinterest then
+	firetouchinterest(plr.Character.HumanoidRootPart,part,0)
+	task.wait()
+	firetouchinterest(plr.Character.HumanoidRootPart,part,1)
+   end
+end
 
-while AutoTreadmill and task.wait() do
-    if plr.Character.HumanoidRootPart.Anchored == false and AutoTreadmill then
-        if plr.Character.Humanoid.WalkSpeed ~= 16 then
-            ToggleRun() 
-        end
-        
-        plr.Character.HumanoidRootPart.CFrame = treadmill:FindFirstChild("Conveyor").CFrame
-        task.wait(0.4)
-        fireclickdetector(TMCD)
-        task.wait(0.1)
-    elseif plr.Character.HumanoidRootPart.Anchored == true and AutoTreadmill then
-        if plr.Character.Humanoid.WalkSpeed ~= 16 then
-            ToggleRun() 
-        end
-        
-        if plr.PlayerGui.TreadGui.Enabled == true and AutoTreadmill then
-            task.wait()
-        else
-            if plr.Character.Humanoid.WalkSpeed == 16 and StaminaStatus() == "max" and AutoTreadmill then
-               ToggleRun()
-               task.wait(1)
-               repeat
-                   local check = StaminaStatus()
-                   task.wait()
-               until check == "recharge" or AutoTreadmill ~= true
-               
-               ToggleRun()
-               
-               repeat
-                   local check = StaminaStatus()
-                   task.wait()
-               until check == "max" or AutoTreadmill ~= true
+local function GetABed()
+    for i,v in pairs(workspace:GetChildren()) do
+    	if v:FindFirstChild("Hospital Bed") then
+    	    return v:FindFirstChild("Hospital Bed")
+    	end
+    end
+end
+
+--// Feature Functions \\--
+
+
+AutoTreadFunc = function()
+   local plr = plr
+
+    local treadmill = GetClosestTreadmill()
+    local TMCD = treadmill:FindFirstChild("Conveyor").ClickDetector
+    
+    while AutoTreadmill and task.wait() do
+        if plr.Character.HumanoidRootPart.Anchored == false and AutoTreadmill then
+            if plr.Character.Humanoid.WalkSpeed ~= 16 then
+                ToggleRun() 
+            end
+            
+            plr.Character.HumanoidRootPart.CFrame = treadmill:FindFirstChild("Conveyor").CFrame
+            task.wait(0.4)
+            fireclickdetector(TMCD)
+            task.wait(0.1)
+        elseif plr.Character.HumanoidRootPart.Anchored == true and AutoTreadmill then
+            if plr.Character.Humanoid.WalkSpeed ~= 16 then
+                ToggleRun() 
+            end
+            
+            if plr.PlayerGui.TreadGui.Enabled == true and AutoTreadmill then
+                task.wait()
+            else
+                if plr.Character.Humanoid.WalkSpeed == 16 and StaminaStatus() == "max" and AutoTreadmill then
+                   ToggleRun()
+                   task.wait(1)
+                   repeat
+                       local check = StaminaStatus()
+                       task.wait()
+                   until check == "recharge" or AutoTreadmill ~= true
+                   
+                   ToggleRun()
+                   
+                   repeat
+                       local check = StaminaStatus()
+                       task.wait()
+                   until check == "max" or AutoTreadmill ~= true
+                end
             end
         end
-    end
-end 
+    end 
 end
 
 AutoVanillaFunc = function()
     while AutoVanilla and task.wait() do
-        local w = game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Vanilla Protein Shake")
-        if w and game:GetService("Players").LocalPlayer.Character ~= nil then
-            w.Parent = game:GetService("Players").LocalPlayer.Character
+        local w = plr.Backpack:FindFirstChild("Vanilla Protein Shake")
+        if w and plr.Character ~= nil then
+            w.Parent = plr.Character
             task.wait(0.5)
-            w = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Vanilla Protein Shake")
+            w = plr.Character:FindFirstChild("Vanilla Protein Shake")
             w:Activate()
         else
             continue
@@ -246,7 +328,7 @@ end
 
 AutoBuyShakeFunc = function()
     while AutoBuyShake and task.wait() do
-       game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Purchaseables2["Protein Shake $75"].Head.CFrame
+       plr.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Purchaseables2["Protein Shake $75"].Head.CFrame
        fireclickdetector(game:GetService("Workspace").Purchaseables2["Protein Shake $75"].ClickDetector) 
     end
 end
@@ -255,23 +337,15 @@ AutoMoneyFunc = function()
     local jobpart = game:GetService("Workspace").JobBoard.GetJob
 	local jobCD = jobpart.ClickDetector
 	local dropoff = game:GetService("Workspace").DropOffPoint
-	local jobui = game:GetService("Players").LocalPlayer.PlayerGui.Jobs
-
-	function Touch(part)
-	   if firetouchinterest then
-		firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart,part,0)
-		task.wait()
-		firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart,part,1)
-	   end
-	end
+	local jobui = plr.PlayerGui.Jobs
 
 	while MoneyFarm and task.wait() do
 	    if jobui.Enabled == true then
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = dropoff.CFrame
+		plr.Character.HumanoidRootPart.CFrame = dropoff.CFrame
 		Touch(dropoff)
 		task.wait(0.5)
 	    else
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = jobpart.CFrame
+		plr.Character.HumanoidRootPart.CFrame = jobpart.CFrame
 		task.wait(0.4)
 		fireclickdetector(jobCD)
 		task.wait(0.1)
@@ -280,33 +354,54 @@ AutoMoneyFunc = function()
 end
 
 AutoSleepFunc = function()
-    	local Fatigue = game:GetService("Players").LocalPlayer.Stats.Fatigue.Value
-
-	function disableAll()
-	     	E:SetState(false)
-		D:SetState(false)
-		B:SetState(false)
-		A:SetState(false)
-	end
-
-	function GetABed()
-	    for i,v in pairs(workspace:GetChildren()) do
-		if v:FindFirstChild("Hospital Bed") then
-		    return v:FindFirstChild("Hospital Bed")
-		end
-	    end
-	end
-
 	while AutoSleep and task.wait() do
-		if Fatigue >= 60 then
-			if game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored ~= true then
+	    local Fatigue = plr.Stats.Fatigue.Value
+	    
+		if Fatigue >= MaxFatigue then
+			if plr.Character.HumanoidRootPart.Anchored ~= true then
 				disableAll()
 				local bed = GetABed()
-				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = bed.ActivePart.CFrame
+				plr.Character.HumanoidRootPart.CFrame = bed.ActivePart.CFrame
 				task.wait(0.4)
 				fireclickdetector(bed.ClickDetector)
 				task.wait(10)
 			end
 	    end
 	end
+end
+
+AutoCSTFunc = function()
+    local CST = game:GetService("Workspace").Purchaseables2.NonChangeable["Combat Speed Training $70"]
+    local CSTCD = CST.ClickDetector
+    local CSTCF = CFrame.new(-3229.66016, -2071.5459, 1768.86389, -0.013615814, -9.55438679e-08, -0.999907315, 4.63641436e-09, 1, -9.56158601e-08, 0.999907315, -5.93787197e-09, -0.013615814)
+    
+    while AutoCST and task.wait() do
+       local CSTUI = plr.PlayerGui:FindFirstChild("MinigameGui")
+       local CSTCheck = plr.Backpack:FindFirstChild("Combat Speed Training")
+       
+       plr.Character.HumanoidRootPart.CFrame = CSTCF
+       
+       if CSTCheck == nil and CSTUI.Enabled ~= true or CSTCheck ~= nil and CSTUI.Enabled ~= true and AutoCST then
+          if CSTCheck == nil then
+              fireclickdetector(CSTCD,10)
+          end
+          task.wait()
+          plr.Character.Humanoid:UnequipTools()
+          pcall(function()
+          if plr.Character:FindFirstChild("Combat Speed Training") == nil then
+              plr.Backpack:FindFirstChild("Combat Speed Training").Parent = plr.Character
+          end
+          CSTCheck = plr.Character:FindFirstChild("Combat Speed Training")
+          CSTCheck:Activate()
+          task.wait(0.5)
+          end)
+          continue
+       end
+        
+       if CSTUI.Enabled == true and AutoCST then
+          plr.PlayerGui.Client.MinigameFunction:InvokeServer(Enum.KeyCode[CSTUI.KeyToPress.Text])
+          CSTUI.Enabled = false
+          task.wait(0.5)
+       end
+    end
 end
