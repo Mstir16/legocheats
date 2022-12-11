@@ -1,6 +1,8 @@
 --// VARS \\--
 local plr = game.Players.LocalPlayer
 local vim = game:GetService("VirtualInputManager")
+local TreadX,TreadY
+local TreadMode
 local MinStam = 20
 local MaxFatigue = 60
 local AutoTreadmill = false
@@ -67,6 +69,30 @@ local MinStamSlide = main.Slider({
 	Min = 0,
 	Max = plr.Stats.MaxStamina.Value,
 	Def = MinStam
+})
+
+local TreadmillModeDD = main.Dropdown({
+	Text = "Treadmill Mode (REQUIRED)",
+	Callback = function(Value)
+		TreadMode = Value
+		
+		if TreadMode == "Stamina" then
+            TreadX,TreadY = 714,462
+        elseif TreadMode == "Speed" then
+            TreadX,TreadY = 1171,462
+        end
+	end,
+	Options = {
+		"Stamina",
+		"Speed",
+	},
+	Menu = {
+		Information = function(self)
+			X.Banner({
+				Text = "Pick What Button to use on Treadmill"
+			})
+		end
+	}
 })
 
 UIToggles["B"] = main.Toggle({
@@ -339,7 +365,7 @@ AutoTreadFunc = function()
     local TMCD = treadmill:FindFirstChild("Conveyor").ClickDetector
     
     while AutoTreadmill and task.wait() do
-        if plr.Character.HumanoidRootPart.Anchored == false and AutoTreadmill then
+        if plr.Character.HumanoidRootPart.Anchored == false and TreadX ~= nil and TreadY ~= nil and AutoTreadmill then
             if plr.Character.Humanoid.WalkSpeed ~= 16 then
                 ToggleRun() 
             end
@@ -347,8 +373,12 @@ AutoTreadFunc = function()
             plr.Character.HumanoidRootPart.CFrame = treadmill:FindFirstChild("Conveyor").CFrame
             task.wait(0.4)
             fireclickdetector(TMCD)
-            task.wait(0.1)
-        elseif plr.Character.HumanoidRootPart.Anchored == true and AutoTreadmill then
+            task.wait(0.4)
+            vim:SendMouseButtonEvent(TreadX,TreadY, 0, true, game.Players.LocalPlayer.PlayerGui.TreadGui, 1)
+            task.wait()
+            vim:SendMouseButtonEvent(TreadX,TreadY, 0, false, game.Players.LocalPlayer.PlayerGui.TreadGui, 1)
+            task.wait(0.2)
+        elseif plr.Character.HumanoidRootPart.Anchored == true and TreadX ~= nil and TreadY ~= nil and AutoTreadmill then
             if plr.Character.Humanoid.WalkSpeed ~= 16 then
                 ToggleRun() 
             end
