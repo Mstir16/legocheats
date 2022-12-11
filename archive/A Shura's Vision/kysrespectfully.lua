@@ -1,5 +1,6 @@
 --// VARS \\--
 local plr = game.Players.LocalPlayer
+local vim = game:GetService("VirtualInputManager")
 local MinStam = 20
 local MaxFatigue = 60
 local AutoTreadmill = false
@@ -378,15 +379,32 @@ end
 AutoVanillaFunc = function()
     while AutoVanilla and task.wait() do
         local w = plr.Backpack:FindFirstChild("Vanilla Protein Shake")
+        local wasOn = nil
+        
         if w and plr.Character ~= nil then
+            if UIToggles["G"]:GetState() == true then
+                UIToggles["G"]:SetState(false)
+                wasOn = UIToggles["G"]
+                task.wait(1)
+                vim:SendKeyEvent(true, "L", false, game)
+                repeat task.wait(1) until plr.PlayerGui:FindFirstChild("MinigameGui").Enabled == false
+                task.wait(1)
+            end
+            
             w.Parent = plr.Character
             task.wait(0.5)
             w = plr.Character:FindFirstChild("Vanilla Protein Shake")
             w:Activate()
+            task.wait(1.5)
+            if wasOn ~= nil then
+                wasOn:SetState(true)
+                task.wait()
+                wasOn = nil
+            end
+            task.wait(28.5)
+            
         else
-            continue
         end
-        task.wait(30)
     end
 end
 
@@ -493,7 +511,6 @@ AutoBenchFunc = function()
 	    if BenchUI.Enabled == true and BenchUI.KeyToPress.TextTransparency == 0 and BenchUI.KeyToPress.TextColor3 == Color3.fromRGB(255,255,255) and AutoBench then
 		if BenchUI.KeyToPress.TextColor3 == Color3.fromRGB(255,255,255) and BenchUI.KeyToPress.TextColor3 ~= Color3.fromRGB(255,0,0) then
 		    task.wait(0.1)
-		    local vim = game:GetService("VirtualInputManager")
 		    vim:SendKeyEvent(true, BenchUI.KeyToPress.Text, false, game)
 		    repeat task.wait(0.1) until BenchUI.KeyToPress.TextColor3 == Color3.fromRGB(255,255,255) or AutoBench == false
 		    continue
