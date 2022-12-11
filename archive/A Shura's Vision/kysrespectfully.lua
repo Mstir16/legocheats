@@ -612,6 +612,8 @@ AutoStrikeForceFunc = function()
         if LimbWCheck and AutoStrikeForce then
             repeat
                 if plr.Backpack:FindFirstChild("Fists") and not plr.Character:FindFirstChild("Fists") then
+                   plr.Character.Humanoid:UnequipTools()
+                   task.wait(0.3)
                    plr.Backpack.Fists.Parent = plr.Character
                    task.wait(0.5)
                 end
@@ -631,7 +633,7 @@ AutoStrikeForceFunc = function()
                 lw:Activate()
                 task.wait(0.1)
                 plr.Character.Humanoid:UnequipTools()
-                task.wait()
+                task.wait(0.3)
             else
                 local distance = (plr.Character.HumanoidRootPart.Position - LimbWeights.Head.Position).magnitude
                        
