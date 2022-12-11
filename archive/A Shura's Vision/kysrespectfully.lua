@@ -12,6 +12,7 @@ local MoneyFarm = false
 local AutoSleep = false
 local AutoCST = false
 local AutoBench = false
+local AutoStrikeForce = false
 local AutoTreadFunc
 local AutoMoneyFunc
 local AutoVanillaFunc
@@ -19,6 +20,7 @@ local AutoBuyShakeFunc
 local AutoSleepFunc
 local AutoCSTFunc
 local AutoBenchFunc
+local AutoStrikeForceFunc
 
 --// LIB \\--
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
@@ -143,6 +145,22 @@ UIToggles["G"] = main.Toggle({
 	Enabled = AutoBench
 })
 
+UIToggles["H"] = main.Toggle({
+	Text = "Auto Strike Force",
+	Callback = function(Value)
+		AutoStrikeForce = Value
+		
+		if AutoStrikeForce then
+		   task.spawn(function()
+		       pcall(function()
+		            AutoStrikeForceFunc()
+		       end)
+		   end)
+		end
+	end,
+	Enabled = AutoStrikeForce
+})
+
 local MaxFatigueSlide = main.Slider({
 	Text = "Maximum Fatigue",
 	Callback = function(Value)
@@ -264,7 +282,7 @@ end))
 local function GetClosestTreadmill()
     local collection = {}
     
-    for i,v in pairs(game:GetService("Workspace").Treadmills:GetChildren()) do
+    for i,v in pairs(workspace.Treadmills:GetChildren()) do
         local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Conveyor").Position).magnitude
         table.insert(collection,#collection+1,distance) 
     end
@@ -273,7 +291,7 @@ local function GetClosestTreadmill()
     
     local closestDistance = collection[1]
     
-    for i,v in pairs(game:GetService("Workspace").Treadmills:GetChildren()) do
+    for i,v in pairs(workspace.Treadmills:GetChildren()) do
         local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Conveyor").Position).magnitude
         
         if distance <= closestDistance then
@@ -348,11 +366,36 @@ local function GetBenchSeat()
 end
 
 local function GetItem(name)
-   for i,v in pairs(game:GetService("Workspace").Purchaseables2:GetDescendants()) do
+   for i,v in pairs(workspace.Purchaseables2:GetDescendants()) do
        if v.Name:find(name) and v:IsA("Model") then
             return v 
        end
    end
+end
+
+local function GetClosestBag()
+    local collection = {}
+    
+    for i,v in pairs(workspace.Live:GetChildren()) do
+        if v.Name:find("Boxing Bag") then
+            local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
+            table.insert(collection,#collection+1,distance)  
+        end
+    end
+    
+    table.sort(collection)
+    
+    local closestDistance = collection[1]
+    
+    for i,v in pairs(workspace.Live:GetChildren()) do
+        if v.Name:find("Boxing Bag") then
+            local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
+            
+            if distance <= closestDistance then
+                return v
+            end
+        end
+    end
 end
 
 --// Feature Functions \\--
@@ -453,9 +496,9 @@ AutoBuyShakeFunc = function()
 end
 
 AutoMoneyFunc = function()
-    local jobpart = game:GetService("Workspace").JobBoard.GetJob
+    local jobpart = workspace.JobBoard.GetJob
 	local jobCD = jobpart.ClickDetector
-	local dropoff = game:GetService("Workspace").DropOffPoint
+	local dropoff = workspace.DropOffPoint
 	local jobui = plr.PlayerGui.Jobs
 
 	while MoneyFarm and task.wait() do
@@ -495,7 +538,7 @@ AutoSleepFunc = function()
 end
 
 AutoCSTFunc = function()
-    local CST = game:GetService("Workspace").Purchaseables2.NonChangeable["Combat Speed Training $70"]
+    local CST = workspace.Purchaseables2.NonChangeable["Combat Speed Training $70"]
     local CSTCD = CST.ClickDetector
     local CSTCF = CFrame.new(-3229.66016, -2071.5459, 1768.86389, -0.013615814, -9.55438679e-08, -0.999907315, 4.63641436e-09, 1, -9.56158601e-08, 0.999907315, -5.93787197e-09, -0.013615814)
     
@@ -557,4 +600,48 @@ AutoBenchFunc = function()
 		continue
 	    end
 	end
+end
+
+AutoStrikeForceFunc = function()
+    local BoxingBag = GetClosestBag()
+    local LimbWeights = GetItem("Limb Weights")
+    
+    while task.wait() and AutoStrikeForce do
+        local LimbWCheck = plr.Character:FindFirstChild("LimbWeights")
+        
+        if LimbWCheck and AutoStrikeForce then
+            repeat
+                if plr.Backpack:FindFirstChild("Fists") and not plr.Character:FindFirstChild("Fists") then
+                   plr.Backpack.Fists.Parent = plr.Character
+                   task.wait(0.5)
+                end
+                plr.Character.HumanoidRootPart.CFrame = BoxingBag.Torso.CFrame * CFrame.new(3,0,0) * CFrame.Angles(0,math.rad(90),0)
+                task.wait()
+                vim:SendMouseButtonEvent(0, 500, 0, true, game, 1)
+    			task.wait()
+    			vim:SendMouseButtonEvent(0, 500, 0, false, game, 1)
+                task.wait()
+            until AutoStrikeForce == false
+        elseif not LimbWCheck and AutoStrikeForce then
+            if plr.Backpack:FindFirstChild("Limb Weights") then
+                local lw = plr.Backpack:FindFirstChild("Limb Weights")
+                lw.Parent = plr.Character
+                lw = plr.Character:FindFirstChild("Limb Weights")
+                task.wait()
+                lw:Activate()
+                task.wait(0.1)
+                plr.Character.Humanoid:UnequipTools()
+                task.wait()
+            else
+                local distance = (plr.Character.HumanoidRootPart.Position - LimbWeights.Head.Position).magnitude
+                       
+                if distance > 7 then plr.Character.HumanoidRootPart.CFrame = LimbWeights.Head.CFrame task.wait(0.2) continue end
+                
+                plr.Character.HumanoidRootPart.CFrame = LimbWeights.Head.CFrame
+               task.wait()
+               fireclickdetector(LimbWeights.ClickDetector,5)
+               task.wait(0.1)
+            end
+        end
+    end
 end
