@@ -14,6 +14,7 @@ local AutoSleep = false
 local AutoCST = false
 local AutoBench = false
 local AutoStrikeForce = false
+local autoenable = false
 local AutoTreadFunc
 local AutoMoneyFunc
 local AutoVanillaFunc
@@ -22,12 +23,13 @@ local AutoSleepFunc
 local AutoCSTFunc
 local AutoBenchFunc
 local AutoStrikeForceFunc
+local reenablefunc = nil
 
 --// LIB \\--
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
 
 local X = Material.Load({
-	Title = "A Shura's Vision | m1kecorp ©",
+	Title = "A Shura's Vision | m1kecorp©",
 	Style = 1,
 	SizeX = 300,
 	SizeY = 300,
@@ -40,6 +42,15 @@ local X = Material.Load({
 local main = X.New({
 	Title = "MAIN"
 })
+
+local training = X.New({
+	Title = "training"
+})
+
+local settings = X.New({
+	Title = "SETTINGS"
+})
+
 
 
 --// MAIN TAB \\--
@@ -61,115 +72,6 @@ UIToggles["A"] = main.Toggle({
 		end
 	end,
 	Enabled = MoneyFarm
-})
-
-
-local MinStamSlide = main.Slider({
-	Text = "Minimum Stamina",
-	Callback = function(Value)
-		MinStam = Value
-	end,
-	Min = 0,
-	Max = plr.Stats.MaxStamina.Value,
-	Def = MinStam
-})
-
-local TreadmillModeDD = main.Dropdown({
-	Text = "Treadmill Mode",
-	Callback = function(Value)
-		TreadMode = Value
-		
-		if TreadMode == "Stamina" then
-            TreadX,TreadY = 714,462
-        elseif TreadMode == "Speed" then
-            TreadX,TreadY = 1171,462
-        end
-	end,
-	Options = {
-		"Stamina",
-		"Speed",
-	},
-	Menu = {
-		Information = function(self)
-			X.Banner({
-				Text = "Pick What Button to use on Treadmill"
-			})
-		end
-	}
-})
-
-UIToggles["B"] = main.Toggle({
-	Text = "Auto Treadmill",
-	Callback = function(Value)
-		AutoTreadmill = Value
-		
-		if AutoTreadmill then
-		   task.spawn(function()
-		       pcall(function()
-		            AutoTreadFunc()
-		       end)
-		   end)
-		end
-	end,
-	Enabled = AutoTreadmill
-})
-
-UIToggles["F"] = main.Toggle({
-	Text = "Auto Combat Speed",
-	Callback = function(Value)
-		AutoCST = Value
-		
-		if AutoCST then
-		   task.spawn(function()
-		       pcall(function()
-		            AutoCSTFunc()
-		       end)
-		   end)
-		end
-	end,
-	Enabled = AutoCST
-})
-
-UIToggles["G"] = main.Toggle({
-	Text = "Auto Benchpress",
-	Callback = function(Value)
-		AutoBench = Value
-		
-		if AutoBench then
-		   task.spawn(function()
-		       pcall(function()
-		            AutoBenchFunc()
-		       end)
-		   end)
-		end
-	end,
-	Enabled = AutoBench
-})
-
-UIToggles["H"] = main.Toggle({
-	Text = "Auto Strike Force",
-	Callback = function(Value)
-		AutoStrikeForce = Value
-		
-		if AutoStrikeForce then
-		   task.spawn(function()
-		       pcall(function()
-		            AutoStrikeForceFunc()
-		       end)
-		   end)
-		end
-	end,
-	Enabled = AutoStrikeForce
-})
-
-local MaxFatigueSlide = main.Slider({
-	Text = "Maximum Fatigue",
-	Callback = function(Value)
-		MaxFatigue = Value
-	end,
-	Min = 0,
-	Max = 100,
-	Def = MaxFatigue
 })
 
 local C = main.Toggle({
@@ -204,7 +106,6 @@ UIToggles["D"] = main.Toggle({
 	Enabled = AutoVanilla
 })
 
-
 UIToggles["E"] = main.Toggle({
 	Text = "Auto Buy Vanilla Shakes",
 	Callback = function(Value)
@@ -223,6 +124,129 @@ UIToggles["E"] = main.Toggle({
 
 --\\ END OF MAIN TAB //--
 
+--// TRAINING TAB \\--
+
+UIToggles["B"] = training.Toggle({
+	Text = "Auto Treadmill",
+	Callback = function(Value)
+		AutoTreadmill = Value
+		
+		if AutoTreadmill then
+		   task.spawn(function()
+		       pcall(function()
+		            AutoTreadFunc()
+		       end)
+		   end)
+		end
+	end,
+	Enabled = AutoTreadmill
+})
+
+UIToggles["H"] = training.Toggle({
+	Text = "Auto Strike Force",
+	Callback = function(Value)
+		AutoStrikeForce = Value
+		
+		if AutoStrikeForce then
+		   task.spawn(function()
+		       pcall(function()
+		            AutoStrikeForceFunc()
+		       end)
+		   end)
+		end
+	end,
+	Enabled = AutoStrikeForce
+})
+
+UIToggles["F"] = training.Toggle({
+	Text = "Auto Combat Speed",
+	Callback = function(Value)
+		AutoCST = Value
+		
+		if AutoCST then
+		   task.spawn(function()
+		       pcall(function()
+		            AutoCSTFunc()
+		       end)
+		   end)
+		end
+	end,
+	Enabled = AutoCST
+})
+
+UIToggles["G"] = training.Toggle({
+	Text = "Auto Benchpress",
+	Callback = function(Value)
+		AutoBench = Value
+		
+		if AutoBench then
+		   task.spawn(function()
+		       pcall(function()
+		            AutoBenchFunc()
+		       end)
+		   end)
+		end
+	end,
+	Enabled = AutoBench
+})
+
+--\\ END OF TRAINING TAB //--
+
+--// SETTINGS TAB \\--
+
+local MinStamSlide = settings.Slider({
+	Text = "Minimum Stamina",
+	Callback = function(Value)
+		MinStam = Value
+	end,
+	Min = 0,
+	Max = plr.Stats.MaxStamina.Value,
+	Def = MinStam
+})
+
+local MaxFatigueSlide = settings.Slider({
+	Text = "Maximum Fatigue",
+	Callback = function(Value)
+		MaxFatigue = Value
+	end,
+	Min = 0,
+	Max = 100,
+	Def = MaxFatigue
+})
+
+local TreadmillModeDD = settings.Dropdown({
+	Text = "Treadmill Mode",
+	Callback = function(Value)
+		TreadMode = Value
+		
+		if TreadMode == "Stamina" then
+            TreadX,TreadY = 714,462
+        elseif TreadMode == "Speed" then
+            TreadX,TreadY = 1171,462
+        end
+	end,
+	Options = {
+		"Stamina",
+		"Speed",
+	},
+	Menu = {
+		Information = function(self)
+			X.Banner({
+				Text = "Pick What Button to use on Treadmill"
+			})
+		end
+	}
+})
+
+local autoenableToggle = settings.Toggle({
+	Text = "Auto Enable after 0%",
+	Callback = function(Value)
+		autoenable = Value
+	end,
+	Enabled = autoenable
+})
+
+--\\ END OF SETTINGS TAB //--
 
 --// Helpful Functions \\--
 
@@ -249,15 +273,13 @@ local function enableCached()
     preenabled = {}
 end
 
-local reenablefunc = nil
-
 local function IsFatigueMax()
     local Fatigue = plr.Stats.Fatigue.Value
     
     if Fatigue >= MaxFatigue then
         disableAll()
         coroutine.resume(coroutine.create(function()
-            if reenablefunc == nil then
+            if reenablefunc == nil and autoenable then
                 reenablefunc = true
                 repeat 
                     task.wait() 
