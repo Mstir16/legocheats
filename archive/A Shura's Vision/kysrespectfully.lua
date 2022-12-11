@@ -458,14 +458,14 @@ AutoTreadFunc = function()
                    repeat
                        local check = StaminaStatus()
                        task.wait()
-                   until check == "recharge" or AutoTreadmill ~= true
+                   until check == "recharge" or AutoTreadmill ~= true or plr.Character.HumanoidRootPart.Anchored == false
                    
                    ToggleRun()
                    
                    repeat
                        local check = StaminaStatus()
                        task.wait()
-                   until check == "max" or AutoTreadmill ~= true
+                   until check == "max" or AutoTreadmill ~= true 
                 end
             end
         end
@@ -498,8 +498,8 @@ AutoVanillaFunc = function()
                 wasOn = nil
             end
             task.wait(28.5)
-            
         else
+            continue
         end
     end
 end
