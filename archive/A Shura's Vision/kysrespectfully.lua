@@ -374,9 +374,9 @@ AutoTreadFunc = function()
             task.wait(0.4)
             fireclickdetector(TMCD)
             task.wait(0.4)
-            vim:SendMouseButtonEvent(TreadX,TreadY, 0, true, game.Players.LocalPlayer.PlayerGui.TreadGui, 1)
+            vim:SendMouseButtonEvent(TreadX,TreadY, 0, true, plr.PlayerGui.TreadGui, 1)
             task.wait()
-            vim:SendMouseButtonEvent(TreadX,TreadY, 0, false, game.Players.LocalPlayer.PlayerGui.TreadGui, 1)
+            vim:SendMouseButtonEvent(TreadX,TreadY, 0, false, plr.PlayerGui.TreadGui, 1)
             task.wait(0.2)
         elseif plr.Character.HumanoidRootPart.Anchored == true and TreadX ~= nil and TreadY ~= nil and AutoTreadmill then
             if plr.Character.Humanoid.WalkSpeed ~= 16 then
