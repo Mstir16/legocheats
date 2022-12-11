@@ -74,7 +74,7 @@ local MinStamSlide = main.Slider({
 })
 
 local TreadmillModeDD = main.Dropdown({
-	Text = "Treadmill Mode (REQUIRED)",
+	Text = "Treadmill Mode",
 	Callback = function(Value)
 		TreadMode = Value
 		
