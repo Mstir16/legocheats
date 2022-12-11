@@ -3,6 +3,7 @@ local plr = game.Players.LocalPlayer
 local vim = game:GetService("VirtualInputManager")
 local TreadX,TreadY
 local TreadMode
+local CombatTool = plr.Stats.Style.Value
 local MinStam = 20
 local MaxFatigue = 60
 local AutoTreadmill = false
@@ -611,10 +612,10 @@ AutoStrikeForceFunc = function()
         
         if LimbWCheck and AutoStrikeForce then
             repeat
-                if plr.Backpack:FindFirstChild("Fists") and not plr.Character:FindFirstChild("Fists") then
+                if plr.Backpack:FindFirstChild(CombatTool) and not plr.Character:FindFirstChild(CombatTool) then
                    plr.Character.Humanoid:UnequipTools()
                    task.wait(0.3)
-                   plr.Backpack.Fists.Parent = plr.Character
+                   plr.Backpack[CombatTool].Parent = plr.Character
                    task.wait(0.5)
                 end
                 plr.Character.HumanoidRootPart.CFrame = BoxingBag.Torso.CFrame * CFrame.new(3,0,0) * CFrame.Angles(0,math.rad(90),0)
