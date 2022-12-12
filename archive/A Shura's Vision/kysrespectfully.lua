@@ -677,9 +677,9 @@ AutoCSTFunc = function()
                 end
                 plr.Character.HumanoidRootPart.CFrame = BoxingBag.Torso.CFrame * CFrame.new(3,0,0) * CFrame.Angles(0,math.rad(90),0)
                 task.wait()
-                vim:SendMouseButtonEvent(0, 500, 0, true, game, 1)
-    			task.wait()
-    			vim:SendMouseButtonEvent(0, 500, 0, false, game, 1)
+                if plr.Character:FindFirstChild(CombatTool) then
+                    plr.Character:FindFirstChild(CombatTool):Activate() 
+                end
                 task.wait()
             until AutoCST == false
         elseif not LimbWCheck and AutoCST then
@@ -750,9 +750,9 @@ AutoStrikeForceFunc = function()
                 end
                 plr.Character.HumanoidRootPart.CFrame = BoxingBag.Torso.CFrame * CFrame.new(3,0,0) * CFrame.Angles(0,math.rad(90),0)
                 task.wait()
-                vim:SendMouseButtonEvent(0, 500, 0, true, game, 1)
-    			task.wait()
-    			vim:SendMouseButtonEvent(0, 500, 0, false, game, 1)
+                if plr.Character:FindFirstChild(CombatTool) then
+                    plr.Character:FindFirstChild(CombatTool):Activate() 
+                end
                 task.wait()
             until AutoStrikeForce == false
         elseif not LimbWCheck and AutoStrikeForce then
