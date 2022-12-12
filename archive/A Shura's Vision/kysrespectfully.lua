@@ -134,9 +134,9 @@ UIToggles["B"] = training.Toggle({
 		
 		if AutoTreadmill then
 		   task.spawn(function()
-		       pcall(function()
+		      -- pcall(function()
 		            AutoTreadFunc()
-		       end)
+		      -- end)
 		   end)
 		end
 	end,
@@ -303,6 +303,26 @@ coroutine.resume(coroutine.create(function()
     end
 end))
 
+local function IsOccupied(obj) -- CENTER PART IS APPRECIATED
+    local occupied = false
+    
+    for _,player in pairs(game.Players:GetPlayers()) do
+        if player == plr then continue end
+        local distance = (player.Character.HumanoidRootPart.Position - obj.Position).magnitude
+        
+        if distance <= 5 then
+            occupied = true
+        end
+    end
+    
+    if occupied == true then
+        return true
+    else
+        return false 
+    end
+end
+
+
 local function GetClosestTreadmill()
     local collection = {}
     
@@ -312,16 +332,30 @@ local function GetClosestTreadmill()
     end
     
     table.sort(collection)
+    local solved = false
+    local tablepos = 1
     
-    local closestDistance = collection[1]
+    repeat
+        local closestDistance = collection[tablepos]
     
-    for i,v in pairs(workspace.Treadmills:GetChildren()) do
-        local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Conveyor").Position).magnitude
-        
-        if distance <= closestDistance then
-            return v
+        for i,v in pairs(workspace.Treadmills:GetChildren()) do
+            local mainPart = v:FindFirstChild("Conveyor")
+            local distance = (plr.Character.HumanoidRootPart.Position - mainPart.Position).magnitude
+            
+            if distance <= closestDistance and IsOccupied(mainPart) == false then
+                solved = true
+                return v
+            end
         end
-    end
+        
+        if tablepos < #collection then
+            tablepos = tablepos + 1
+        elseif tablepos >= #collection then
+            break
+        end
+        
+        task.wait()
+    until solved == true
 end
 
 local function SimulateClick(button)
@@ -373,6 +407,8 @@ local function Touch(part)
    end
 end
 
+
+
 local function GetABed()
     local bedmodel = nil
     
@@ -384,17 +420,7 @@ local function GetABed()
     
     for _, bed in pairs(bedmodel:GetChildren()) do
         if bed.Name == "Hospital Bed" then
-            local bedoccupied = false
-            
-            for _,player in pairs(game.Players:GetPlayers()) do
-                local distance = (player.Character.HumanoidRootPart.Position - bed.ActivePart.Position).magnitude
-                
-                if distance <= 5 then
-                    bedoccupied = true
-                end
-            end
-            
-            if bedoccupied == true then
+            if IsOccupied(bed.ActivePart) == true then
                continue
             else
                 return bed
@@ -430,18 +456,30 @@ local function GetClosestBag()
     end
     
     table.sort(collection)
+    local solved = false
+    local tablepos = 1
     
-    local closestDistance = collection[1]
+    repeat
+        local closestDistance = collection[tablepos]
     
-    for i,v in pairs(workspace.Live:GetChildren()) do
-        if v.Name:find("Boxing Bag") then
-            local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
-            
-            if distance <= closestDistance then
-                return v
+        for i,v in pairs(workspace.Live:GetChildren()) do
+            if v.Name:find("Boxing Bag") then
+                local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
+                
+                if distance <= closestDistance and IsOccupied(v.Torso) == false then
+                    return v
+                end
             end
         end
-    end
+        
+        if tablepos < #collection then
+            tablepos = tablepos + 1
+        elseif tablepos >= #collection then
+            break
+        end
+        
+        task.wait()
+    until solved == true
 end
 
 local function GetClosestCSBag()
@@ -455,18 +493,30 @@ local function GetClosestCSBag()
     end
     
     table.sort(collection)
+    local solved = false
+    local tablepos = 1
     
-    local closestDistance = collection[1]
+    repeat
+        local closestDistance = collection[tablepos]
     
-    for i,v in pairs(workspace.Live:GetChildren()) do
-        if v.Name:find("Boxing Bag CS") then
-            local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
-            
-            if distance <= closestDistance then
-                return v
+        for i,v in pairs(workspace.Live:GetChildren()) do
+            if v.Name:find("Boxing Bag CS") then
+                local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
+                
+                if distance <= closestDistance and IsOccupied(v.Torso) == false then
+                    return v
+                end
             end
         end
-    end
+        
+        if tablepos < #collection then
+            tablepos = tablepos + 1
+        elseif tablepos >= #collection then
+            break
+        end
+        
+        task.wait()
+    until solved == true
 end
 
 --// Feature Functions \\--
@@ -474,7 +524,7 @@ end
 
 AutoTreadFunc = function()
    local plr = plr
-
+    
     local treadmill = GetClosestTreadmill()
     local TMCD = treadmill:FindFirstChild("Conveyor").ClickDetector
     
