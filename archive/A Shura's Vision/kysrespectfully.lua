@@ -256,7 +256,7 @@ local function disableAll()
         local currentState = v:GetState()
         local toggleletter = i
         
-        if currentState == true then
+        if currentState == true and autoenable then
             table.insert(preenabled,#preenabled+1,toggleletter) 
         end
         v:SetState(false)
@@ -264,6 +264,8 @@ local function disableAll()
 end
 
 local function enableCached()
+    if not autoenable then return end
+	
     for letter,toggle in pairs(UIToggles) do
         for i,v in pairs(preenabled) do
             if letter == v then
@@ -285,7 +287,7 @@ local function IsFatigueMax()
                 repeat 
                     task.wait() 
                     local FatigueCheck = plr.Stats.Fatigue.Value
-                until FatigueCheck <= 0
+                until FatigueCheck <= 0 or autoenable == false
                 enableCached()
                 task.wait(1)
                 reenablefunc = nil
