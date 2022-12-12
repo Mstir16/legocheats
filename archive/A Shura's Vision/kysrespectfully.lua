@@ -16,6 +16,7 @@ local AutoCST = false
 local AutoBench = false
 local AutoStrikeForce = false
 local autoenable = false
+local disableOnJoin = false
 local AutoTreadFunc
 local AutoMoneyFunc
 local AutoVanillaFunc
@@ -24,6 +25,7 @@ local AutoSleepFunc
 local AutoCSTFunc
 local AutoBenchFunc
 local AutoStrikeForceFunc
+local disableOnJoinFunc
 local reenablefunc = nil
 
 --// LIB \\--
@@ -256,7 +258,7 @@ local function disableAll()
         local currentState = v:GetState()
         local toggleletter = i
         
-        if currentState == true and autoenable then
+        if currentState == true then
             table.insert(preenabled,#preenabled+1,toggleletter) 
         end
         v:SetState(false)
@@ -264,8 +266,6 @@ local function disableAll()
 end
 
 local function enableCached()
-    if not autoenable then return end
-	
     for letter,toggle in pairs(UIToggles) do
         for i,v in pairs(preenabled) do
             if letter == v then
@@ -287,7 +287,7 @@ local function IsFatigueMax()
                 repeat 
                     task.wait() 
                     local FatigueCheck = plr.Stats.Fatigue.Value
-                until FatigueCheck <= 0 or autoenable == false
+                until FatigueCheck <= 0
                 enableCached()
                 task.wait(1)
                 reenablefunc = nil
@@ -525,8 +525,6 @@ end
 
 
 AutoTreadFunc = function()
-   local plr = plr
-    
     local treadmill = GetClosestTreadmill()
     local TMCD = treadmill:FindFirstChild("Conveyor").ClickDetector
     
