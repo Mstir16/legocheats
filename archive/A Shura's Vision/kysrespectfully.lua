@@ -382,20 +382,22 @@ local function GetABed()
     end
     
     for _, bed in pairs(bedmodel:GetChildren()) do
-        local bedoccupied = false
-        
-        for _,player in pairs(game.Players:GetPlayers()) do
-            local distance = (player.Character.HumanoidRootPart.Position - bed.ActivePart.Position).magnitude
+        if bed.Name == "Hospital Bed" then
+            local bedoccupied = false
             
-            if distance <= 5 then
-                bedoccupied = true
+            for _,player in pairs(game.Players:GetPlayers()) do
+                local distance = (player.Character.HumanoidRootPart.Position - bed.ActivePart.Position).magnitude
+                
+                if distance <= 5 then
+                    bedoccupied = true
+                end
             end
-        end
-        
-        if bedoccupied == true then
-           continue
-        else
-            return bed
+            
+            if bedoccupied == true then
+               continue
+            else
+                return bed
+            end
         end
     end
 end
