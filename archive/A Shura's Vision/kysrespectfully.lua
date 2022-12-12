@@ -373,10 +373,30 @@ local function Touch(part)
 end
 
 local function GetABed()
-    for i,v in pairs(workspace:GetChildren()) do
-    	if v:FindFirstChild("Hospital Bed") then
-    	    return v:FindFirstChild("Hospital Bed")
+    local bedmodel = nil
+    
+    for _,obj in pairs(workspace:GetChildren()) do
+    	if obj:FindFirstChild("Hospital Bed") then
+    	    bedmodel = obj
     	end
+    end
+    
+    for _, bed in pairs(bedmodel:GetChildren()) do
+        local bedoccupied = false
+        
+        for _,player in pairs(game.Players:GetPlayers()) do
+            local distance = (player.Character.HumanoidRootPart.Position - bed.ActivePart.Position).magnitude
+            
+            if distance <= 5 then
+                bedoccupied = true
+            end
+        end
+        
+        if bedoccupied == true then
+           continue
+        else
+            return bed
+        end
     end
 end
 
