@@ -4,6 +4,7 @@ local vim = game:GetService("VirtualInputManager")
 local TreadX,TreadY
 local TreadMode
 local CombatTool = plr.Stats.Style.Value
+if CombatTool == "" then CombatTool = "Fists" end
 local MinStam = 20
 local MaxFatigue = 60
 local AutoTreadmill = false
@@ -443,6 +444,31 @@ local function GetClosestBag()
     end
 end
 
+local function GetClosestCSBag()
+    local collection = {}
+    
+    for i,v in pairs(workspace.Live:GetChildren()) do
+        if v.Name:find("Boxing Bag CS") then
+            local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
+            table.insert(collection,#collection+1,distance)  
+        end
+    end
+    
+    table.sort(collection)
+    
+    local closestDistance = collection[1]
+    
+    for i,v in pairs(workspace.Live:GetChildren()) do
+        if v.Name:find("Boxing Bag CS") then
+            local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
+            
+            if distance <= closestDistance then
+                return v
+            end
+        end
+    end
+end
+
 --// Feature Functions \\--
 
 
@@ -583,41 +609,48 @@ AutoSleepFunc = function()
 end
 
 AutoCSTFunc = function()
-    local CST = workspace.Purchaseables2.NonChangeable["Combat Speed Training $70"]
-    local CSTCD = CST.ClickDetector
-    local CSTCF = CFrame.new(-3229.66016, -2071.5459, 1768.86389, -0.013615814, -9.55438679e-08, -0.999907315, 4.63641436e-09, 1, -9.56158601e-08, 0.999907315, -5.93787197e-09, -0.013615814)
+    local BoxingBag = GetClosestCSBag()
+    local LimbWeights = GetItem("Limb Weights")
     
-    while AutoCST and task.wait() do
-       local CSTUI = plr.PlayerGui:FindFirstChild("MinigameGui")
-       local CSTCheck = plr.Backpack:FindFirstChild("Combat Speed Training")
-       
-       if CSTCheck == nil and CSTUI.Enabled ~= true or CSTCheck ~= nil and CSTUI.Enabled ~= true and AutoCST then
-          if CSTCheck == nil then
-	          local distance = (plr.Character.HumanoidRootPart.Position - CSTCF.Position).magnitude
-       
-              if distance > 10 then plr.Character.HumanoidRootPart.CFrame = CSTCF task.wait(0.2) continue end
-       	      plr.Character.HumanoidRootPart.CFrame = CSTCF
-       	      task.wait(0.2)
-              fireclickdetector(CSTCD,10)
-          end
-          task.wait()
-          plr.Character.Humanoid:UnequipTools()
-          pcall(function()
-          if plr.Character:FindFirstChild("Combat Speed Training") == nil then
-              plr.Backpack:FindFirstChild("Combat Speed Training").Parent = plr.Character
-          end
-          CSTCheck = plr.Character:FindFirstChild("Combat Speed Training")
-          CSTCheck:Activate()
-          task.wait(0.5)
-          end)
-          continue
-       end
+    while task.wait() and AutoCST do
+        local LimbWCheck = plr.Character:FindFirstChild("LimbWeights")
         
-       if CSTUI.Enabled == true and AutoCST then
-          plr.PlayerGui.Client.MinigameFunction:InvokeServer(Enum.KeyCode[CSTUI.KeyToPress.Text])
-          CSTUI.Enabled = false
-          task.wait(0.5)
-       end
+        if LimbWCheck and AutoCST then
+            repeat
+                if plr.Backpack:FindFirstChild(CombatTool) and not plr.Character:FindFirstChild(CombatTool) then
+                   plr.Character.Humanoid:UnequipTools()
+                   task.wait(0.3)
+                   plr.Backpack[CombatTool].Parent = plr.Character
+                   task.wait(0.5)
+                end
+                plr.Character.HumanoidRootPart.CFrame = BoxingBag.Torso.CFrame * CFrame.new(3,0,0) * CFrame.Angles(0,math.rad(90),0)
+                task.wait()
+                vim:SendMouseButtonEvent(0, 500, 0, true, game, 1)
+    			task.wait()
+    			vim:SendMouseButtonEvent(0, 500, 0, false, game, 1)
+                task.wait()
+            until AutoCST == false
+        elseif not LimbWCheck and AutoCST then
+            if plr.Backpack:FindFirstChild("Limb Weights") then
+                local lw = plr.Backpack:FindFirstChild("Limb Weights")
+                lw.Parent = plr.Character
+                lw = plr.Character:FindFirstChild("Limb Weights")
+                task.wait()
+                lw:Activate()
+                task.wait(0.1)
+                plr.Character.Humanoid:UnequipTools()
+                task.wait(0.3)
+            else
+                local distance = (plr.Character.HumanoidRootPart.Position - LimbWeights.Head.Position).magnitude
+                       
+                if distance > 7 then plr.Character.HumanoidRootPart.CFrame = LimbWeights.Head.CFrame task.wait(0.2) continue end
+                
+                plr.Character.HumanoidRootPart.CFrame = LimbWeights.Head.CFrame
+               task.wait()
+               fireclickdetector(LimbWeights.ClickDetector,5)
+               task.wait(0.1)
+            end
+        end
     end
 end
 	
