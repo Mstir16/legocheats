@@ -510,10 +510,12 @@ AutoTreadFunc = function()
                    
                    ToggleRun()
                    
-                   repeat
-                       local check = StaminaStatus()
-                       task.wait()
-                   until check == "max" or AutoTreadmill ~= true 
+                   if StaminaStatus() == "recharge" then
+                       repeat
+                           local check = StaminaStatus()
+                           task.wait()
+                       until check == "max" or AutoTreadmill ~= true 
+                    end
                 end
             end
         end
