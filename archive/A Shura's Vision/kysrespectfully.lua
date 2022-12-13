@@ -17,6 +17,7 @@ local AutoBench = false
 local AutoStrikeForce = false
 local autoenable = false
 local disableOnJoin = false
+local disableOJFunc
 local AutoTreadFunc
 local AutoMoneyFunc
 local AutoVanillaFunc
@@ -25,8 +26,57 @@ local AutoSleepFunc
 local AutoCSTFunc
 local AutoBenchFunc
 local AutoStrikeForceFunc
-local disableOnJoinFunc
 local reenablefunc = nil
+
+--// File Saving Shit \\--
+local SettingsData = {
+    whitelisted = {},
+}
+
+local folderName = "m1keincorporated"
+local fileName = "ASV_"..plr.UserId
+local dataTable = SettingsData
+
+function ReadConfig()
+    local fileData = readfile("/"..folderName.."/"..fileName..".json")
+    local data = game:GetService("HttpService"):JSONDecode(fileData)
+    
+    for i,v in pairs(data) do
+        if typeof(v) ~= "table" then
+            dataTable[i] = v
+        else
+            for i2,v2 in pairs(data[i]) do
+                if tonumber(i2) then
+                   dataTable[i] = v
+                   continue
+                end
+                
+                dataTable[i][i2] = v2
+            end
+        end
+    end
+end
+
+function AppendConfig()
+    local data = game:GetService("HttpService"):JSONEncode(dataTable)
+    writefile("/"..folderName.."/"..fileName..".json",data)
+end
+
+local folder = isfolder("/"..folderName)
+local file = isfile("/"..folderName.."/"..fileName..".json")
+
+if not folder then
+    makefolder("/"..folderName) 
+end
+
+if not file then
+    local data = game:GetService("HttpService"):JSONEncode(dataTable)
+    writefile("/"..folderName.."/"..fileName..".json",data)
+else
+    ReadConfig()
+end
+
+ReadConfig()
 
 --// LIB \\--
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
@@ -249,6 +299,116 @@ local autoenableToggle = settings.Toggle({
 	Enabled = autoenable
 })
 
+local trustedSelection
+
+local trustaPlayer = settings.Dropdown({
+	Text = "Trust a Player",
+	Callback = function(Value)
+		trustedSelection = Value
+	end,
+	Options = {},
+})
+
+local daplayers = {}
+
+for i,v in pairs(game.Players:GetPlayers()) do
+    table.insert(daplayers,v.Name)
+end
+trustaPlayer:SetOptions(daplayers)
+
+game.Players.PlayerAdded:Connect(function()
+    local daplayers = {}
+
+    for i,v in pairs(game.Players:GetPlayers()) do
+        table.insert(daplayers,v.Name)
+    end
+    trustaPlayer:SetOptions(daplayers)
+end)
+
+game.Players.PlayerRemoving:Connect(function()
+    local daplayers = {}
+
+    for i,v in pairs(game.Players:GetPlayers()) do
+        table.insert(daplayers,v.Name)
+    end
+    trustaPlayer:SetOptions(daplayers)
+end)
+
+local addplrButton = settings.Button({
+	Text = "Trust Selected Player",
+	Callback = function()
+	    local player = game.Players:FindFirstChild(trustedSelection)
+	    if player then
+		    if not table.find(SettingsData.whitelisted,player.UserId) then
+		        table.insert(SettingsData.whitelisted,player.UserId)
+		        AppendConfig()
+		    end
+		end
+    end,
+})
+
+local addplrButton = settings.Button({
+	Text = "UnTrust Selected Player",
+	Callback = function()
+	    local player = game.Players:FindFirstChild(trustedSelection)
+	    if player then
+		    if table.find(SettingsData.whitelisted,player.UserId) then
+		        table.remove(SettingsData.whitelisted,table.find(SettingsData.whitelisted,player.UserId))
+		        AppendConfig()
+		    end
+		end
+    end,
+})
+
+local disabeojToggle = settings.Toggle({
+	Text = "Disable On plr's joining",
+	Callback = function(Value)
+		disableOnJoin = Value
+		
+		if disableOnJoin then
+		    for i,v in pairs(game.Players:GetPlayers()) do
+                if not table.find(SettingsData.whitelisted,v.UserId) and v ~= plr then
+                    for i,v in pairs(UIToggles) do
+                        local currentState = v:GetState()
+                        local toggleletter = i
+                        
+                        v:SetState(false)
+                    end 
+                end
+		    end
+            disableOJFunc = game.Players.PlayerAdded:Connect(function(plr)
+            if not table.find(SettingsData.whitelisted,plr.UserId) then
+                    for i,v in pairs(UIToggles) do
+                        local currentState = v:GetState()
+                        local toggleletter = i
+                        
+                        v:SetState(false)
+                    end
+                    print("DISABLE")
+                    return
+                else
+                    print("SAFE")
+                end
+            end)
+		else
+		    pcall(function()
+		        disableOJFunc:Disconnect()
+		    end)
+		end
+	end,
+	Enabled = disableOnJoin
+})
+
+local printTrustPlayers = settings.Button({
+	Text = "print Trusted Players (F9)",
+	Callback = function()
+	    print("-- TRUSTED PLAYER USER IDS --")
+	    for i,v in pairs(SettingsData.whitelisted) do
+	       print(i,v) 
+	    end
+    end,
+})
+
 --\\ END OF SETTINGS TAB //--
 
 --// Helpful Functions \\--
@@ -268,7 +428,7 @@ end
 local function enableCached()
     for letter,toggle in pairs(UIToggles) do
         for i,v in pairs(preenabled) do
-            if letter == v then
+            if letter == v and autoenable then
                 toggle:SetState(true) 
             end
         end
