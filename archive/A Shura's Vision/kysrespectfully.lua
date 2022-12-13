@@ -757,6 +757,10 @@ AutoTreadFunc = function()
                 ToggleRun() 
             end
             
+            local distance = (plr.Character.HumanoidRootPart.Position - treadmill:FindFirstChild("Conveyor").Position).magnitude
+       
+            if distance > 7 then plr.Character.HumanoidRootPart.CFrame = treadmill:FindFirstChild("Conveyor").CFrame task.wait(0.2) continue end
+            
             plr.Character.HumanoidRootPart.CFrame = treadmill:FindFirstChild("Conveyor").CFrame
             task.wait(0.4)
             fireclickdetector(TMCD)
