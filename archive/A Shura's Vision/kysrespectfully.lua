@@ -9,7 +9,7 @@ local MinStam = 20
 local MaxFatigue = 60
 local AutoTreadmill = false
 local AutoVanilla = false
-local AutoBuyShake = false
+local AutoBuyItem = false
 local MoneyFarm = false
 local AutoSleep = false
 local AutoCST = false
@@ -17,22 +17,38 @@ local AutoBench = false
 local AutoStrikeForce = false
 local autoenable = false
 local disableOnJoin = false
+local autoeatMod = false
+local autoeatFat = false
 local disableOJFunc
 local AutoTreadFunc
 local AutoMoneyFunc
-local AutoVanillaFunc
-local AutoBuyShakeFunc
+local AutoFatFunc
+local AutoEatFunc
+local AutoBuyItemFunc
 local AutoSleepFunc
 local AutoCSTFunc
 local AutoBenchFunc
 local AutoStrikeForceFunc
 local SafeLoop
 local reenablefunc = nil
-
 local safetyDisabledStuff = {}
 local IsOnSafetyMode = false
 local UIToggles = {}
 local preenabled = {}
+local items = game:GetService("Workspace").Purchaseables2:GetDescendants()
+local SelectedItem
+local HungerVal = 30
+local CalorieVal = 50
+
+local newtable = {}
+
+for i,v in pairs(items) do
+    if v:IsA("Model") and v.Parent:IsA("Folder") then
+        table.insert(newtable,v) 
+    end
+end
+
+items = newtable
 
 --// File Saving Shit \\--
 local SettingsData = {
@@ -146,36 +162,95 @@ local C = main.Toggle({
 	Enabled = AutoSleep
 })
 
-UIToggles["D"] = main.Toggle({
-	Text = "Auto Vanilla Shakes",
+local function ConvertTable(daTable)
+   local newTable = {}
+    
+   for i,v in pairs(daTable) do
+       if v.Name == nil or v:FindFirstChild("Head") == nil then continue end
+       local mapcenterCF = CFrame.new(-3192.6875, -2012.11328, 1954.90491, 0.957663953, -9.33519484e-09, 0.287888467, 3.77047016e-09, 1, 1.98839203e-08, -0.287888467, -1.79566388e-08, 0.957663953)
+       local distance = (mapcenterCF.Position - v.Head.Position).magnitude
+       
+       if distance >= 2000 then continue end
+       
+       table.insert(newTable,v.Name)
+   end
+   
+   return newTable
+end
+
+local function SearchTable(table,value)
+     for i,v in pairs(table) do
+         if v.Name == value then
+            return v 
+         end
+     end
+end
+
+local itemsDD = main.Dropdown({
+	Text = "Select Item",
 	Callback = function(Value)
-		AutoVanilla = Value
-		
-		if AutoVanilla then
-		   task.spawn(function()
-		       pcall(function()
-		            AutoVanillaFunc()
-		       end)
-		   end)
-		end
+        SelectedItem = SearchTable(items,Value)
 	end,
-	Enabled = AutoVanilla
+	Options = ConvertTable(items)
 })
 
-UIToggles["E"] = main.Toggle({
-	Text = "Auto Buy Vanilla Shakes",
+UIToggles["D"] = main.Toggle({
+	Text = "Auto Eat Item (FAT)",
 	Callback = function(Value)
-		AutoBuyShake = Value
+		autoeatFat = Value
 		
-		if AutoBuyShake then
+		if autoeatFat then
 		   task.spawn(function()
 		       pcall(function()
-		            AutoBuyShakeFunc()
+		            AutoFatFunc()
 		       end)
 		   end)
 		end
 	end,
-	Enabled = AutoBuyShake
+	Enabled = autoeatFat
+})
+
+local autoeatHungerpercent = main.Slider({
+	Text = "Auto Eat Moderate %",
+	Callback = function(Value)
+		HungerVal = Value
+	end,
+	Min = 0,
+	Max = 100,
+	Def = HungerVal
+})
+
+UIToggles["I"] = main.Toggle({
+	Text = "Auto Eat Item (MODERATE)",
+	Callback = function(Value)
+		autoeatMod = Value
+		
+		if autoeatMod then
+		   task.spawn(function()
+		       pcall(function()
+		            AutoEatFunc()
+		       end)
+		   end)
+		end
+	end,
+	Enabled = autoeatMod
+})
+
+
+UIToggles["E"] = main.Toggle({
+	Text = "Auto Buy Item",
+	Callback = function(Value)
+		AutoBuyItem = Value
+		
+		if AutoBuyItem then
+		   task.spawn(function()
+		       pcall(function()
+		            AutoBuyItemFunc()
+		       end)
+		   end)
+		end
+	end,
+	Enabled = AutoBuyItem
 })
 
 --\\ END OF MAIN TAB //--
@@ -799,12 +874,29 @@ AutoTreadFunc = function()
     end 
 end
 
-AutoVanillaFunc = function()
-    while AutoVanilla and task.wait() do
-        local w = plr.Backpack:FindFirstChild("Vanilla Protein Shake")
+AutoFatFunc = function()
+    local itemName = SelectedItem.Name:split(" $")[1] or "Protein Shake"
+    
+    local function checkforitem(wheretolook)
+       if wheretolook:FindFirstChild(itemName) then
+           return wheretolook:FindFirstChild(itemName)
+       else
+           for i,v in pairs(wheretolook:GetChildren()) do
+               if v.Name:find(itemName) then
+                  return v 
+               end
+           end
+       end
+       
+       return nil
+    end
+    
+    while autoeatFat and task.wait() do
+        local w = checkforitem(plr.Backpack)
+        if w == nil then print(itemName) continue end
         local wasOn = nil
         
-        if w and plr.Character ~= nil then
+        if w and plr.Character ~= nil and autoeatFat then
             if UIToggles["G"]:GetState() == true then
                 UIToggles["G"]:SetState(false)
                 wasOn = UIToggles["G"]
@@ -816,7 +908,8 @@ AutoVanillaFunc = function()
             
             w.Parent = plr.Character
             task.wait(0.5)
-            w = plr.Character:FindFirstChild("Vanilla Protein Shake")
+            w = checkforitem(plr.Character)
+            if w == nil then print(itemName) continue end
             w:Activate()
             task.wait(1.5)
             if wasOn ~= nil then
@@ -831,17 +924,69 @@ AutoVanillaFunc = function()
     end
 end
 
-AutoBuyShakeFunc = function()
-    local Shake = GetItem("Protein Shake")
-	
-    while AutoBuyShake and task.wait() do
-       local distance = (plr.Character.HumanoidRootPart.Position - Shake.Head.Position).magnitude
+AutoEatFunc = function()
+    local itemName = SelectedItem.Name:split(" $")[1] or "Protein Shake"
+    
+    local function checkforitem(wheretolook)
+       if wheretolook:FindFirstChild(itemName) then
+           return wheretolook:FindFirstChild(itemName)
+       else
+           for i,v in pairs(wheretolook:GetChildren()) do
+               if v.Name:find(itemName) then
+                  return v 
+               end
+           end
+       end
        
-       if distance > 7 then plr.Character.HumanoidRootPart.CFrame = Shake.Head.CFrame task.wait(0.2) continue end
+       return nil
+    end
+    
+    while autoeatMod and task.wait() do
+        local w = checkforitem(plr.Backpack)
+        if w == nil then print(itemName) continue end
+        local wasOn = nil
+        
+        local HungerPercent = (plr.PlayerGui.StatBars.Bars.HungerFrame.HungerBar.AbsoluteSize.X/plr.PlayerGui.StatBars.Bars.HungerFrame.AbsoluteSize.X * 100)
+        local CaloriePercent = (plr.PlayerGui.StatBars.Bars.HungerFrame.CalorieBar.AbsoluteSize.X/plr.PlayerGui.StatBars.Bars.HungerFrame.AbsoluteSize.X * 100)
+        
+        if w and plr.Character ~= nil and autoeatMod and HungerPercent <= HungerVal and CaloriePercent < 50 then
+            if UIToggles["G"]:GetState() == true then
+                UIToggles["G"]:SetState(false)
+                wasOn = UIToggles["G"]
+                task.wait(1)
+                vim:SendKeyEvent(true, "L", false, game)
+                repeat task.wait(1) until plr.PlayerGui:FindFirstChild("MinigameGui").Enabled == false
+                task.wait(1)
+            end
+            
+            w.Parent = plr.Character
+            task.wait(0.5)
+            w = checkforitem(plr.Character)
+            if w == nil then print(itemName) continue end
+            w:Activate()
+            task.wait(1.5)
+            if wasOn ~= nil then
+                wasOn:SetState(true)
+                task.wait()
+                wasOn = nil
+            end
+        else
+            continue
+        end
+        task.wait()
+    end
+end
+
+AutoBuyItemFunc = function()
+    while AutoBuyItem and task.wait() do
+       local Item = SelectedItem
+       local distance = (plr.Character.HumanoidRootPart.Position - Item.Head.Position).magnitude
        
-       plr.Character.HumanoidRootPart.CFrame = Shake.Head.CFrame
+       if distance > 7 then plr.Character.HumanoidRootPart.CFrame = Item.Head.CFrame task.wait(0.2) continue end
+       
+       plr.Character.HumanoidRootPart.CFrame = Item.Head.CFrame
        task.wait()
-       fireclickdetector(Shake.ClickDetector,5)
+       fireclickdetector(Item.ClickDetector,5)
     end
 end
 
