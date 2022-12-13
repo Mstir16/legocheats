@@ -26,7 +26,13 @@ local AutoSleepFunc
 local AutoCSTFunc
 local AutoBenchFunc
 local AutoStrikeForceFunc
+local SafeLoop
 local reenablefunc = nil
+
+local safetyDisabledStuff = {}
+local IsOnSafetyMode = false
+local UIToggles = {}
+local preenabled = {}
 
 --// File Saving Shit \\--
 local SettingsData = {
@@ -107,9 +113,6 @@ local settings = X.New({
 
 
 --// MAIN TAB \\--
-
-local UIToggles = {}
-local preenabled = {}
 
 UIToggles["A"] = main.Toggle({
 	Text = "Money Farm",
@@ -372,8 +375,18 @@ local disabeojToggle = settings.Toggle({
                         local currentState = v:GetState()
                         local toggleletter = i
                         
-                        v:SetState(false)
+                        if currentState == true and IsOnSafetyMode == false then
+                           v:SetState(false)
+                           table.insert(safetyDisabledStuff,v)
+                        end
                     end 
+                    autoenableToggle:SetState(false)
+                    
+                    if IsOnSafetyMode == false then
+                        IsOnSafetyMode = true
+                        table.insert(safetyDisabledStuff,autoenableToggle)
+                        SafeLoop()
+                    end
                 end
 		    end
             disableOJFunc = game.Players.PlayerAdded:Connect(function(plr)
@@ -382,12 +395,18 @@ local disabeojToggle = settings.Toggle({
                         local currentState = v:GetState()
                         local toggleletter = i
                         
-                        v:SetState(false)
+                        if currentState == true and IsOnSafetyMode == false then
+                           v:SetState(false)
+                           table.insert(safetyDisabledStuff,v)
+                        end
                     end
-                    print("DISABLE")
-                    return
-                else
-                    print("SAFE")
+                    autoenableToggle:SetState(false)
+                    
+                    if IsOnSafetyMode == false then
+                        IsOnSafetyMode = true
+                        table.insert(safetyDisabledStuff,autoenableToggle)
+                        SafeLoop()
+                    end
                 end
             end)
 		else
@@ -428,7 +447,7 @@ end
 local function enableCached()
     for letter,toggle in pairs(UIToggles) do
         for i,v in pairs(preenabled) do
-            if letter == v and autoenable then
+            if letter == v and autoenable and IsOnSafetyMode == false then
                 toggle:SetState(true) 
             end
         end
@@ -442,7 +461,7 @@ local function IsFatigueMax()
     if Fatigue >= MaxFatigue then
         disableAll()
         coroutine.resume(coroutine.create(function()
-            if reenablefunc == nil and autoenable then
+            if reenablefunc == nil and autoenable and IsOnSafetyMode == false then
                 reenablefunc = true
                 repeat 
                     task.wait() 
@@ -679,6 +698,50 @@ local function GetClosestCSBag()
         
         task.wait()
     until solved == true
+end
+
+local function IsServerSafe()
+    local whitelistTable = SettingsData.whitelisted
+    
+    for i,v in pairs(game.Players:GetPlayers()) do
+        if not table.find(whitelistTable,v.UserId) and v ~= plr then
+            return false 
+        end
+    end
+    
+    return true
+end
+
+SafeLoop = function()
+    task.spawn(function()
+        local backuppreenable = {}
+        local backedupPre = false
+        
+        if #preenabled > 0 then
+           for i,v in pairs(preenabled) do
+               table.insert(backuppreenable,v)
+           end
+           backedupPre = true
+        end
+        
+        repeat
+            local check = IsServerSafe()
+            task.wait()
+        until check == true
+        
+        if #preenabled == 0 and backedupPre == true then
+           for i,v in pairs(backuppreenable) do
+               table.insert(preenabled,v)
+           end
+        end
+        
+        for i,v in pairs(safetyDisabledStuff) do
+            v:SetState(true) 
+        end
+        
+        safetyDisabledStuff = {}
+        IsOnSafetyMode = false
+    end)
 end
 
 --// Feature Functions \\--
