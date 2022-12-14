@@ -1150,3 +1150,8 @@ AutoStrikeForceFunc = function()
         end
     end
 end
+
+plr.Idled:connect(function()
+    game:GetService("VirtualUser"):CaptureController()
+    game:GetService("VirtualUser"):ClickButton2(Vector2.new())
+end)
