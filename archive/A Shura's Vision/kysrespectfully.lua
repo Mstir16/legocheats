@@ -938,10 +938,8 @@ end
 AutoEatFunc = function()
     local itemName = SelectedItem.Name:split(" $")[1]
     
-    if itemName == nil then
-        if itemName.Name:find("Protein Shake") then
-            itemName = "Vanilla Protein Shake"
-        end
+    if itemName.Name:find("Protein Shake") then
+        itemName = "Vanilla Protein Shake"
     end
     
     local function checkforitem(wheretolook)
