@@ -875,7 +875,13 @@ AutoTreadFunc = function()
 end
 
 AutoFatFunc = function()
-    local itemName = SelectedItem.Name:split(" $")[1] or "Protein Shake"
+    local itemName = SelectedItem.Name:split(" $")[1] 
+    
+    if itemName == nil then
+        if itemName.Name:find("Protein Shake") then
+            itemName = "Vanilla Protein Shake"
+        end
+    end
     
     local function checkforitem(wheretolook)
        if wheretolook:FindFirstChild(itemName) then
@@ -925,7 +931,13 @@ AutoFatFunc = function()
 end
 
 AutoEatFunc = function()
-    local itemName = SelectedItem.Name:split(" $")[1] or "Protein Shake"
+    local itemName = SelectedItem.Name:split(" $")[1]
+    
+    if itemName == nil then
+        if itemName.Name:find("Protein Shake") then
+            itemName = "Vanilla Protein Shake"
+        end
+    end
     
     local function checkforitem(wheretolook)
        if wheretolook:FindFirstChild(itemName) then
@@ -958,7 +970,7 @@ AutoEatFunc = function()
                 repeat task.wait(1) until plr.PlayerGui:FindFirstChild("MinigameGui").Enabled == false
                 task.wait(1)
             end
-            
+            print("EATINGGGGGGG")
             w.Parent = plr.Character
             task.wait(0.5)
             w = checkforitem(plr.Character)
@@ -1150,8 +1162,3 @@ AutoStrikeForceFunc = function()
         end
     end
 end
-
-plr.Idled:connect(function()
-    game:GetService("VirtualUser"):CaptureController()
-    game:GetService("VirtualUser"):ClickButton2(Vector2.new())
-end)
