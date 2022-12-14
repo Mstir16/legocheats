@@ -264,9 +264,9 @@ UIToggles["B"] = training.Toggle({
 		
 		if AutoTreadmill then
 		   task.spawn(function()
-		      -- pcall(function()
+		       pcall(function()
 		            AutoTreadFunc()
-		      -- end)
+		       end)
 		   end)
 		end
 	end,
@@ -840,10 +840,15 @@ AutoTreadFunc = function()
             task.wait(0.4)
             fireclickdetector(TMCD)
             task.wait(0.4)
-            vim:SendMouseButtonEvent(TreadX,TreadY, 0, true, plr.PlayerGui.TreadGui, 1)
-            task.wait()
-            vim:SendMouseButtonEvent(TreadX,TreadY, 0, false, plr.PlayerGui.TreadGui, 1)
-            task.wait(0.2)
+            if plr.PlayerGui.TreadGui.Enabled == true then
+                repeat
+                    vim:SendMouseButtonEvent(TreadX,TreadY, 0, true, plr.PlayerGui.TreadGui, 1)
+                    task.wait()
+                    vim:SendMouseButtonEvent(TreadX,TreadY, 0, false, plr.PlayerGui.TreadGui, 1)
+                    task.wait()
+                until AutoTreadmill == false or plr.PlayerGui.TreadGui.Enabled == false
+            end
+            task.wait(0.1)
         elseif plr.Character.HumanoidRootPart.Anchored == true and TreadX ~= nil and TreadY ~= nil and AutoTreadmill then
             if plr.Character.Humanoid.WalkSpeed ~= 16 then
                 ToggleRun() 
