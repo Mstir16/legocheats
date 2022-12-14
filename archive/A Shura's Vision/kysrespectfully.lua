@@ -884,11 +884,9 @@ end
 AutoFatFunc = function()
     local itemName = SelectedItem.Name:split(" $")[1] 
     
-    if itemName == nil then
-        if itemName.Name:find("Protein Shake") then
+        if SelectedItem.Name:find("Protein Shake") then
             itemName = "Vanilla Protein Shake"
         end
-    end
     
     local function checkforitem(wheretolook)
        if wheretolook:FindFirstChild(itemName) then
@@ -940,7 +938,7 @@ end
 AutoEatFunc = function()
     local itemName = SelectedItem.Name:split(" $")[1]
     
-    if itemName.Name:find("Protein Shake") then
+    if SelectedItem.Name:find("Protein Shake") then
         itemName = "Vanilla Protein Shake"
     end
     
