@@ -846,9 +846,11 @@ AutoTreadFunc = function()
                     task.wait()
                     vim:SendMouseButtonEvent(TreadX,TreadY, 0, false, plr.PlayerGui.TreadGui, 1)
                     task.wait()
+		    print('treadclick')
                 until AutoTreadmill == false or plr.PlayerGui.TreadGui.Enabled == false
-            end
-            task.wait(0.1)
+            	print("w stop")
+	    end
+            task.wait(0.2)
         elseif plr.Character.HumanoidRootPart.Anchored == true and TreadX ~= nil and TreadY ~= nil and AutoTreadmill then
             if plr.Character.Humanoid.WalkSpeed ~= 16 then
                 ToggleRun() 
