@@ -19,6 +19,10 @@ local autoenable = false
 local disableOnJoin = false
 local autoeatMod = false
 local autoeatFat = false
+local PushupRemote = false
+local AutoSitups = false
+local AutoSitupsFunc
+local FatigueLimiter = true
 local disableOJFunc
 local AutoTreadFunc
 local AutoMoneyFunc
@@ -321,6 +325,37 @@ UIToggles["G"] = training.Toggle({
 	Enabled = AutoBench
 })
 
+UIToggles["J"] = training.Toggle({
+	Text = "Passive SF and Muscle",
+	Callback = function(Value)
+		PushupRemote = Value
+		
+        if PushupRemote then
+            while PushupRemote and task.wait() and IsServerSafe() do
+                game:GetService("ReplicatedStorage").TrainEvent:FireServer("PushUp")
+            end
+            UIToggles["J"]:SetState(false)
+        end
+	end,
+	Enabled = PushupRemote
+})
+
+UIToggles["K"] = training.Toggle({
+	Text = "Auto Situp",
+	Callback = function(Value)
+		AutoSitups = Value
+		
+		if AutoSitups then
+		   task.spawn(function()
+		       pcall(function()
+		            AutoSitupsFunc()
+		       end)
+		   end)
+		end
+	end,
+	Enabled = AutoSitups
+})
+
 --\\ END OF TRAINING TAB //--
 
 --// SETTINGS TAB \\--
@@ -343,6 +378,14 @@ local MaxFatigueSlide = settings.Slider({
 	Min = 0,
 	Max = 100,
 	Def = MaxFatigue
+})
+
+local fatigueLimit = settings.Toggle({
+	Text = "Fatigue Limiter",
+	Callback = function(Value)
+		FatigueLimiter = Value
+	end,
+	Enabled = FatigueLimiter
 })
 
 local TreadmillModeDD = settings.Dropdown({
@@ -520,6 +563,10 @@ local function disableAll()
 end
 
 local function enableCached()
+    if IsOnSafetyMode == true then
+        repeat task.wait() until IsOnSafetyMode == false 
+    end
+    
     for letter,toggle in pairs(UIToggles) do
         for i,v in pairs(preenabled) do
             if letter == v and autoenable and IsOnSafetyMode == false then
@@ -533,7 +580,7 @@ end
 local function IsFatigueMax()
     local Fatigue = plr.Stats.Fatigue.Value
     
-    if Fatigue >= MaxFatigue then
+    if Fatigue >= MaxFatigue and FatigueLimiter then
         disableAll()
         coroutine.resume(coroutine.create(function()
             if reenablefunc == nil and autoenable and IsOnSafetyMode == false then
@@ -541,7 +588,7 @@ local function IsFatigueMax()
                 repeat 
                     task.wait() 
                     local FatigueCheck = plr.Stats.Fatigue.Value
-                until FatigueCheck <= 0
+                until FatigueCheck <= 0 and IsOnSafetyMode == false
                 enableCached()
                 task.wait(1)
                 reenablefunc = nil
@@ -705,7 +752,7 @@ local function GetClosestBag()
     local collection = {}
     
     for i,v in pairs(workspace.Live:GetChildren()) do
-        if v.Name:find("Boxing Bag") and v.HumanoidRootPart.Color == Color3.fromRGB(196,40,28) then
+        if v.Name:find("Boxing Bag") then
             local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
             table.insert(collection,#collection+1,distance)  
         end
@@ -719,7 +766,7 @@ local function GetClosestBag()
         local closestDistance = collection[tablepos]
     
         for i,v in pairs(workspace.Live:GetChildren()) do
-            if v.Name:find("Boxing Bag") and v.HumanoidRootPart.Color == Color3.fromRGB(196,40,28) then
+            if v.Name:find("Boxing Bag") then
                 local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
                 
                 if distance <= closestDistance and IsOccupied(v.Torso) == false then
@@ -742,7 +789,7 @@ local function GetClosestCSBag()
     local collection = {}
     
     for i,v in pairs(workspace.Live:GetChildren()) do
-        if v.Name:find("Boxing Bag CS") and v.HumanoidRootPart.Color == Color3.fromRGB(110,153,202) then
+        if v.Name:find("Boxing Bag CS") then
             local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
             table.insert(collection,#collection+1,distance)  
         end
@@ -756,7 +803,7 @@ local function GetClosestCSBag()
         local closestDistance = collection[tablepos]
     
         for i,v in pairs(workspace.Live:GetChildren()) do
-            if v.Name:find("Boxing Bag CS") and v.HumanoidRootPart.Color == Color3.fromRGB(110,153,202) then
+            if v.Name:find("Boxing Bag CS") then
                 local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
                 
                 if distance <= closestDistance and IsOccupied(v.Torso) == false then
@@ -884,9 +931,11 @@ end
 AutoFatFunc = function()
     local itemName = SelectedItem.Name:split(" $")[1] 
     
-        if SelectedItem.Name:find("Protein Shake") then
+    if itemName == nil then
+        if itemName.Name:find("Protein Shake") then
             itemName = "Vanilla Protein Shake"
         end
+    end
     
     local function checkforitem(wheretolook)
        if wheretolook:FindFirstChild(itemName) then
@@ -938,7 +987,7 @@ end
 AutoEatFunc = function()
     local itemName = SelectedItem.Name:split(" $")[1]
     
-    if SelectedItem.Name:find("Protein Shake") then
+    if itemName.Name:find("Protein Shake") then
         itemName = "Vanilla Protein Shake"
     end
     
@@ -1164,6 +1213,37 @@ AutoStrikeForceFunc = function()
             end
         end
     end
+end
+
+AutoSitupsFunc = function()
+    while AutoSitups and IsServerSafe() and task.wait() do
+        if IsServerSafe() then
+            if plr.Backpack:FindFirstChild("Situp") == nil and plr.Character:FindFirstChild("Situp") == nil and IsServerSafe() then
+               local oldpos = plr.Character.HumanoidRootPart.CFrame
+               local Item = workspace.Purchaseables2.NonChangeable["Situps $800"]
+               
+               local distance = (plr.Character.HumanoidRootPart.Position - Item.Head.Position).magnitude
+       
+               if distance > 7 then plr.Character.HumanoidRootPart.CFrame = Item.Head.CFrame task.wait(0.2) continue end
+               
+               plr.Character.HumanoidRootPart.CFrame = Item.Head.CFrame
+               task.wait()
+               fireclickdetector(Item.ClickDetector,5)
+               task.wait(0.05)
+               plr.Character.HumanoidRootPart.CFrame = oldpos
+               task.wait(0.5)
+            elseif plr.Backpack:FindFirstChild("Situp") and IsServerSafe() then
+                plr.Backpack:FindFirstChild("Situp").Parent = plr.Character
+                task.wait(0.3)
+            elseif plr.Character:FindFirstChild("Situp") and IsServerSafe() then
+                plr.Character:FindFirstChild("Situp"):Activate()
+            end
+        else
+            plr.Character.Humanoid:UnequipTools()
+        end
+    end
+    plr.Character.Humanoid:UnequipTools()
+    UIToggles["K"]:SetState(false)
 end
 
 plr.Idled:connect(function()
