@@ -705,7 +705,7 @@ local function GetClosestBag()
     local collection = {}
     
     for i,v in pairs(workspace.Live:GetChildren()) do
-        if v.Name:find("Boxing Bag") then
+        if v.Name:find("Boxing Bag") and v.HumanoidRootPart.Color == Color3.fromRGB(196,40,28) then
             local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
             table.insert(collection,#collection+1,distance)  
         end
@@ -719,7 +719,7 @@ local function GetClosestBag()
         local closestDistance = collection[tablepos]
     
         for i,v in pairs(workspace.Live:GetChildren()) do
-            if v.Name:find("Boxing Bag") then
+            if v.Name:find("Boxing Bag") and v.HumanoidRootPart.Color == Color3.fromRGB(196,40,28) then
                 local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
                 
                 if distance <= closestDistance and IsOccupied(v.Torso) == false then
@@ -742,7 +742,7 @@ local function GetClosestCSBag()
     local collection = {}
     
     for i,v in pairs(workspace.Live:GetChildren()) do
-        if v.Name:find("Boxing Bag CS") then
+        if v.Name:find("Boxing Bag CS") and v.HumanoidRootPart.Color == Color3.fromRGB(110,153,202) then
             local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
             table.insert(collection,#collection+1,distance)  
         end
@@ -756,7 +756,7 @@ local function GetClosestCSBag()
         local closestDistance = collection[tablepos]
     
         for i,v in pairs(workspace.Live:GetChildren()) do
-            if v.Name:find("Boxing Bag CS") then
+            if v.Name:find("Boxing Bag CS") and v.HumanoidRootPart.Color == Color3.fromRGB(110,153,202) then
                 local distance = (plr.Character.HumanoidRootPart.Position - v:FindFirstChild("Torso").Position).magnitude
                 
                 if distance <= closestDistance and IsOccupied(v.Torso) == false then
