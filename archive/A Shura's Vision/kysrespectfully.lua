@@ -325,21 +325,6 @@ UIToggles["G"] = training.Toggle({
 	Enabled = AutoBench
 })
 
-UIToggles["J"] = training.Toggle({
-	Text = "Passive SF and Muscle",
-	Callback = function(Value)
-		PushupRemote = Value
-		
-        if PushupRemote then
-            while PushupRemote and task.wait() and IsServerSafe() do
-                game:GetService("ReplicatedStorage").TrainEvent:FireServer("PushUp")
-            end
-            UIToggles["J"]:SetState(false)
-        end
-	end,
-	Enabled = PushupRemote
-})
-
 UIToggles["K"] = training.Toggle({
 	Text = "Auto Situp",
 	Callback = function(Value)
@@ -833,6 +818,21 @@ local function IsServerSafe()
     
     return true
 end
+
+UIToggles["J"] = training.Toggle({
+	Text = "Passive SF and Muscle",
+	Callback = function(Value)
+		PushupRemote = Value
+		
+        if PushupRemote then
+            while PushupRemote and task.wait() and IsServerSafe() do
+                game:GetService("ReplicatedStorage").TrainEvent:FireServer("PushUp")
+            end
+            UIToggles["J"]:SetState(false)
+        end
+	end,
+	Enabled = PushupRemote
+})
 
 SafeLoop = function()
     task.spawn(function()
