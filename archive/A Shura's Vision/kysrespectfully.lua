@@ -130,7 +130,39 @@ local settings = X.New({
 	Title = "SETTINGS"
 })
 
+local credits = X.New({
+	Title = "CREDITS"
+})
 
+credits.Button({
+    Text = "made by Daddy m1ke",
+    Callback = function() end,
+})
+
+credits.Button({
+    Text = "m1kecorp on top",
+    Callback = function() end,
+})
+
+credits.Button({
+    Text = "thanks for wave XDDDD",
+    Callback = function() end,
+})
+
+credits.Button({
+    Text = "this mf astra really wanted",
+    Callback = function() end,
+})
+
+credits.Button({
+    Text = "a script on this game...",
+    Callback = function() end,
+})
+
+credits.Button({
+    Text = "astra do be thicc tho",
+    Callback = function() end,
+})
 
 --// MAIN TAB \\--
 
