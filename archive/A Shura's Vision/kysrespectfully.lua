@@ -136,32 +136,50 @@ local credits = X.New({
 
 credits.Button({
     Text = "made by Daddy m1ke",
-    Callback = function() end,
+    Callback = function() setclipboard("m1ke#3815") game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "A Shitty Vision",
+	Text = "Copied m1ke's discord!",
+}) end,
 })
 
 credits.Button({
     Text = "m1kecorp on top",
-    Callback = function() end,
+    Callback = function() setclipboard("m1ke#3815") game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "A Shitty Vision",
+	Text = "Copied m1ke's discord!",
+}) end,
 })
 
 credits.Button({
     Text = "thanks for wave XDDDD",
-    Callback = function() end,
+    Callback = function() setclipboard("m1ke#3815") game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "A Shitty Vision",
+	Text = "Copied m1ke's discord!",
+}) end,
 })
 
 credits.Button({
     Text = "this mf astra really wanted",
-    Callback = function() end,
+    Callback = function() setclipboard("m1ke#3815") game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "A Shitty Vision",
+	Text = "Copied m1ke's discord!",
+}) end,
 })
 
 credits.Button({
     Text = "a script on this game...",
-    Callback = function() end,
+    Callback = function() setclipboard("m1ke#3815") game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "A Shitty Vision",
+	Text = "Copied m1ke's discord!",
+}) end,
 })
 
 credits.Button({
     Text = "astra do be thicc tho",
-    Callback = function() end,
+    Callback = function() setclipboard("m1ke#3815") game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "A Shitty Vision",
+	Text = "Copied m1ke's discord!",
+}) end,
 })
 
 --// MAIN TAB \\--
