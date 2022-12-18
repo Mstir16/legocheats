@@ -9,3 +9,31 @@
 The kit for fucking anything because my obfuscator sucks ass and i fucking want to kms because of how ass it is
 
 ]]--
+
+local api = {}
+
+function api.wait(secs)
+    local timetoWait = secs or 0
+
+    pcall(function()
+        task.wait(timetoWait)
+    end)
+end
+
+function api.delay(secs,callback)
+    local secs = secs or 0
+    local callfunction = callback or function() end
+    
+    pcall(function()
+        task.delay(secs,callfunction)
+    end)
+end
+
+
+function api.spawn(callback)
+    local callfunction = callback or function() end
+    
+    pcall(function()
+        task.spawn(callfunction)
+    end)
+end
