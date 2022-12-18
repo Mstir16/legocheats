@@ -37,3 +37,5 @@ function api.spawn(callback)
         task.spawn(callfunction)
     end)
 end
+
+return api
