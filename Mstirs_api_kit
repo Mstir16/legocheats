@@ -15,27 +15,24 @@ local api = {}
 function api.wait(secs)
     local timetoWait = secs or 0
 
-    pcall(function()
-        task.wait(timetoWait)
-    end)
+
+    return task.wait(timetoWait)
+
 end
 
 function api.delay(secs,callback)
     local secs = secs or 0
     local callfunction = callback or function() end
     
-    pcall(function()
-        task.delay(secs,callfunction)
-    end)
+    return task.delay(secs,callfunction)
 end
 
 
 function api.spawn(callback)
     local callfunction = callback or function() end
     
-    pcall(function()
-        task.spawn(callfunction)
-    end)
+    
+    return task.spawn(callfunction)
 end
 
 return api
