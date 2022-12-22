@@ -209,15 +209,41 @@ credits.Button({
 
 function Tween(target)
     local info = TweenInfo.new((target.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude / speed, Enum.EasingStyle.Linear)
-    local _,err = pcall(function()
-        game:GetService("TweenService") :Create(game.Players.LocalPlayer.Character.HumanoidRootPart, info, {CFrame = target}):Play()
-    end);
+    local Tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, info, {CFrame = target})
+    
+    Tween:Play()
+    Tween.Completed:Wait()
 end;
 
 local function Touch(part)
 	firetouchinterest(plr.Character.HumanoidRootPart,part,0)
 	task.wait()
 	firetouchinterest(plr.Character.HumanoidRootPart,part,1)
+end
+
+local function operationundeground(part)
+    local mainpos = part.CFrame
+    local undergroundpos = CFrame.new(part.CFrame.X,part.CFrame.Y - 20, part.CFrame.Z)
+    
+    local function createSafePart()
+        local safepartpos = CFrame.new(undergroundpos.X,undergroundpos.Y - 20, undergroundpos.Z)
+        
+        local safePart = Instance.new("Part",workspace)
+        safePart.Name = "m1kecorp on top | Umar <3"
+        safePart.CanCollide = true
+        safePart.Size = Vector3.new(100,2,100)
+        safePart.CFrame = safepartpos
+        safePart.Anchored = true
+        
+        game.Debris:AddItem(safePart,30)
+    end
+    
+    createSafePart()
+    Tween(undergroundpos)
+    task.wait()
+    Tween(mainpos)
+    task.wait()
+    Tween(undergroundpos)
 end
 
 AutoRWFunc = function()
@@ -251,8 +277,7 @@ AutoRWFunc = function()
                Tween(CFrame.new(game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart").CFrame.X,game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart").CFrame.Y - 4,game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart").CFrame.Z))
                Touch(game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart"))
            else
-              Tween(game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart").CFrame)
-              Touch(game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart"))
+              operationundeground(game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart"))
            end
            task.wait(1)
        end
@@ -1431,15 +1456,16 @@ local wingchun = training.Toggle({
 
 
 local roadwork = training.Toggle({
-	Text = "Auto RoadWork(FOR MIKE) <3",
+	Text = "Auto Roadwork",
 	Callback = function(Value)
 	    local togglefunc = AutoRWFunc
 	    
 		AutoRW = Value
 		
     	if AutoRW then
-            
+            -- pcall(function()
 		        togglefunc()
+		    --  end)
         end
 	end,
 	Enabled = AutoRW
@@ -1611,7 +1637,7 @@ local LowVest = training.Toggle({
 --// RISKY \\--
 
 local hitbox = risky.Toggle({
-	Text = "Hibox",
+	Text = "Hitbox",
 	Callback = function(Value)
 	    local togglefunc = HitboxFunc
 	    
