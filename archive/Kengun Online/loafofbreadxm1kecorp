@@ -270,15 +270,7 @@ AutoRWFunc = function()
            game:GetService("ReplicatedStorage").Communication.Events.Roadwork:FireServer()
            task.wait(1)
        elseif game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart") then
-           local lofi = CFrame.new(143.901886, 101.939713, 2778.29102, 1, 0, 0, 0, 1, 0, 0, 0, 1)
-           if game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart").CFrame == lofi then
-                -- time to contain this mf
-                
-               Tween(CFrame.new(game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart").CFrame.X,game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart").CFrame.Y - 4,game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart").CFrame.Z))
-               Touch(game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart"))
-           else
-              operationundeground(game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart"))
-           end
+           operationundeground(game:GetService("Workspace").World.Visuals:FindFirstChild("MarkerPart"))
            task.wait(1)
        end
     end
