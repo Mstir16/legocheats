@@ -47,6 +47,7 @@ local SitupsTraining = false
 local HitKick = false
 local AutoPb = false
 local AutoLegitRoadwork = false
+local autopbrange = 13
 --// script function var \\--
 local WingChunFunc
 local AutoBagsFunc
@@ -434,6 +435,57 @@ workspace.CurrentCamera.CameraType = "Custom"
 	plr.CameraMaxZoomDistance = 400
 	plr.CameraMode = "Classic"
 	plr.Head.Anchored = false
+end
+
+AutoPbFunc = function()
+    local function GetAnims()
+        local ez = {}
+        
+        for i,v in next, game:GetService("ReplicatedStorage").Animations.Combat:GetDescendants() do
+           if v:IsA("Folder") and v.Name == "M1" then
+                for _,m1 in next, v:GetChildren() do
+                    table.insert(ez,m1.AnimationId)
+                end
+           end
+        end
+        
+        return ez
+    end
+    
+    local Anims = GetAnims()
+    
+    local function getPlayerInRange()
+        local function IsValidAnim(animhum)
+            for _,track in pairs(animhum:GetPlayingAnimationTracks()) do
+                local currentAnimId = track.Animation.AnimationId
+                
+                if table.find(Anims,currentAnimId) then
+                    return true
+                end
+            end
+            return false
+        end
+        
+        for i,v in pairs(game.Players:GetPlayers()) do
+            local distance = (plr.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude
+            
+            if distance <= autopbrange and IsValidAnim(v.Character:WaitForChild("Humanoid")) then
+                return v
+            end
+        end
+    end
+    
+    local connection
+    connection = game:GetService("RunService").Heartbeat:Connect(function()
+        if AutoPb == false then connection:Disconnect() return end
+        if getPlayerInRange() ~= nil then
+            local vim = game:GetService("VirtualInputManager")
+            
+            vim:SendKeyEvent(true, "F", false, game)
+            task.wait()
+            vim:SendKeyEvent(false, "F", false, game)
+        end
+    end)
 end
 
 AutoBagsFunc = function()
@@ -1573,6 +1625,7 @@ end
 end)
 task.spawn(function()
     while AutoLegitRoadwork do task.wait()
+    print("RAHH")
     local PathfindingService = game:GetService("PathfindingService")
 local function pathto(part)
     settings = {
@@ -1595,6 +1648,9 @@ local function pathto(part)
         game.Players.LocalPlayer.Character.Humanoid:MoveTo(waypoint.Position)
         game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
         part:Destroy()
+    end
+end
+
 pathto(Vector3.new(414, 97, 2430))
 game:GetService("ReplicatedStorage").Communication.Events.Roadwork:FireServer()
 task.wait(1)
@@ -1602,13 +1658,14 @@ pathto(Vector3.new(442.3219909667969, 101.93951416015625, 2410.8359375))
 task.wait(0.5)
 pathto(Vector3.new(452.335938, 101.186859, 2776.46826))
 task.wait(0.5)
+pathto(Vector3.new(142.79486083984375, 97.43949890136719, 2781.412353515625))
+task.wait(0.5)
 pathto(Vector3.new(143.901886, 101.939713, 2778.29102))
 task.wait(0.5)
 pathto(Vector3.new(134.294312, 101.186859, 2423.06299))
 task.wait(0.5)
 pathto(Vector3.new(368.769897, 101.186859, 2403.98804))
-    end
-end
+
 end
 end)
 end
@@ -1680,22 +1737,6 @@ local AEI = main.Toggle({
 	end,
 	Enabled = AutoEat
 })
-
---local ABI = main.Toggle({
-	--Text = "Auto Buy Item",
-	--Callback = function(Value)
-	    --local togglefunc = AutoBuyItemFunc
-	    
-		--AutoBuyItem = Value
-		
-		--if AutoBuyItem then
-		    --pcall(function()
-		      --togglefunc()
-		   -- end)
-		--end
-	--end,
-	--Enabled = AutoBuyItem
---})
 
 local ABV = main.Toggle({
 	Text = "Auto Buy Vanilla",
@@ -1803,9 +1844,9 @@ local roadwork2 = training.Toggle({
 		AutoLegitRoadwork = Value
 		
     	if AutoLegitRoadwork then
-            pcall(function()
+            -- pcall(function()
 		        togglefunc()
-		    end)
+		  --  end)
         end
 	end,
 	Enabled = AutoLegitRoadwork
@@ -2093,6 +2134,15 @@ local hitbox = risky.Toggle({
 	Enabled = AutoPb
 })
 
+local AutoPbRange = risky.Slider({
+	Text = "AutoPb range",
+	Callback = function(Value)
+		MinStam = Value
+	end,
+	Min = 0,
+	Max = 30,
+	Def = autopbrange
+})
 
 --// Misc \\--
 local shopLowButton = misc.Button({
@@ -2223,3 +2273,6 @@ local autoStaff = misc.Toggle({
     Enabled = StaffCheck
 
 })
+
+
+
