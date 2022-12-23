@@ -4,6 +4,8 @@ repeat task.wait() until game:IsLoaded() and game.Players.LocalPlayer.Character 
 local TrainingFolder = game:GetService("Workspace").World.Map:WaitForChild("Training Equipment")
 local plr = game.Players.LocalPlayer
 local char = plr.Character
+char:SetAttribute("Running", true)
+local hum = char.Humanoid
 local http = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
 --// toggle vars \\--
@@ -31,14 +33,20 @@ local AutoBuyVanilla = false
 local MinStam = 50
 local MinHP = 20
 local StreamerMode = false
-local MinHunger = 50
 local EnduranceFarm = false
 local Hitbox = false
 local AutoWithdraw = false
-local KillAura = false
 local stamcheck = false
 local speed = 100
-
+local LowSquatsVestTraining = false
+local MediumSquatsVestTraining = false
+local LowSquatsVestTraining = false
+local HighSquatsVestTraining = false
+local PushupsTraining = false
+local SitupsTraining = false
+local HitKick = false
+local AutoPb = false
+local AutoLegitRoadwork = false
 --// script function var \\--
 local WingChunFunc
 local AutoBagsFunc
@@ -67,7 +75,16 @@ local EnduranceFarmFunc
 local HitboxFunc
 local AutoWithdrawFunc
 local StreamerModeFunc
-local KillAuraFunc
+local LowSquatsVestTrainingFunc
+local MediumSquatsVestTrainingFunc
+local HighSquatsVestTrainingFunc
+local PushupsTrainingFunc
+local SitupsTrainingFunc
+local HitKickFunc
+local AutoPbFunc
+local AutoLegitRoadworkFunc
+
+
 
 task.spawn(function()
     if http then
@@ -328,8 +345,14 @@ end
 
 InfStamFunc = function()
     while InfStam and task.wait() do
-        char.Stamina.Value = 100
-    end
+        pcall(function()
+            local Stamina = plr.Character:FindFirstChild("Stamina")
+            local MaxStamina = Stamina:GetAttribute("Max")
+            local plr = game.Players.LocalPlayer
+            local char2 = plr.Character
+        char2.Stamina.Value = 100
+    end)
+end
 end
 
 BypassAntiFunc = function()
@@ -371,6 +394,12 @@ function HPCheck()
     end
     
     return false
+end
+
+ResetButtonFunc = function()
+    local plr = game.Players.LocalPlayer
+local char = plr.Character
+    char:BreakJoints()
 end
 
 AutoBuyVanillaFunc = function()
@@ -626,6 +655,78 @@ end
 end
 end
 
+SitupsTrainingFunc = function()
+        game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
+        task.wait()
+        local shakeN = "Vanilla Protein Shake"
+        local ToolN = "Situps"
+        
+        local plr = game.Players.LocalPlayer
+        
+        while SitupsTraining and task.wait() do
+            pcall(function()
+                shake = plr.Backpack:FindFirstChild(shakeN) or plr.Character:FindFirstChild(shakeN)
+                tool = plr.Backpack:FindFirstChild(ToolN) or plr.Character:FindFirstChild(ToolN)
+            
+                if StaminaCheck() then
+                   stamcheck = true
+                   repeat
+                       local check = plr.Character:FindFirstChild("Stamina").Value
+                       local MaxStamina = plr.Character:FindFirstChild("Stamina"):GetAttribute("Max")
+                       task.wait()
+                   until check >= MaxStamina or SitupsTraining == false
+                   stamcheck = false
+                end
+    
+                task.wait(0.5)
+                    if tool.Parent == plr.Backpack and plr.Character:FindFirstChild(shakeN) == nil then
+                       plr.Character.Humanoid:EquipTool(tool)
+                       task.wait(1)
+                    elseif tool.Parent == plr.Character and plr.Character:FindFirstChild(shakeN) == nil then
+                        task.wait(0.2)
+                        tool:Activate()
+                        task.wait(0.2)
+                    end
+                end)
+            end
+end
+
+PushupsTrainingFunc = function()
+    game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
+    task.wait()
+    local shakeN = "Vanilla Protein Shake"
+    local ToolN = "Pushups"
+    
+    local plr = game.Players.LocalPlayer
+    
+    while PushupsTraining and task.wait() do
+        pcall(function()
+            shake = plr.Backpack:FindFirstChild(shakeN) or plr.Character:FindFirstChild(shakeN)
+            tool = plr.Backpack:FindFirstChild(ToolN) or plr.Character:FindFirstChild(ToolN)
+        
+            if StaminaCheck() then
+               stamcheck = true
+               repeat
+                   local check = plr.Character:FindFirstChild("Stamina").Value
+                   local MaxStamina = plr.Character:FindFirstChild("Stamina"):GetAttribute("Max")
+                   task.wait()
+               until check >= MaxStamina or PushupsTraining == false
+               stamcheck = false
+            end
+
+            task.wait(0.5)
+                if tool.Parent == plr.Backpack and plr.Character:FindFirstChild(shakeN) == nil then
+                   plr.Character.Humanoid:EquipTool(tool)
+                   task.wait(1)
+                elseif tool.Parent == plr.Character and plr.Character:FindFirstChild(shakeN) == nil then
+                    task.wait(0.2)
+                    tool:Activate()
+                    task.wait(0.2)
+                end
+            end)
+        end
+    end
+
 MediumPushupVestTrainFunc = function()
     game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
     task.wait()
@@ -668,9 +769,9 @@ MediumPushupVestTrainFunc = function()
                    plr.Character.Humanoid:EquipTool(tool)
                    task.wait(1)
                 elseif tool.Parent == plr.Character and plr.Character:FindFirstChild(shakeN) == nil then
-                    local vi = game:service'VirtualInputManager'
-                    vi:SendMouseButtonEvent(500, 500, 0, true, game, 1)
-                    task.wait(0.4)
+                    task.wait(0.2)
+                    tool:Activate()
+                    task.wait(0.2)
                 end
             end
         end)
@@ -721,9 +822,9 @@ HighPushupVestTrainFunc = function()
                    plr.Character.Humanoid:EquipTool(tool)
                    task.wait(1)
                 elseif tool.Parent == plr.Character and plr.Character:FindFirstChild(shakeN) == nil then
-                    local vi = game:service'VirtualInputManager'
-                    vi:SendMouseButtonEvent(500, 500, 0, true, game, 1)
-                    task.wait(0.4)
+                    task.wait(0.2)
+                    tool:Activate()
+                    task.wait(0.2)
                 end
             end
         end)
@@ -774,9 +875,9 @@ LowSitupsVestTrainingFunc = function()
                    plr.Character.Humanoid:EquipTool(tool)
                    task.wait(1)
                 elseif tool.Parent == plr.Character and plr.Character:FindFirstChild(shakeN) == nil then
-                    local vi = game:service'VirtualInputManager'
-                    vi:SendMouseButtonEvent(500, 500, 0, true, game, 1)
-                    task.wait(0.4)
+                    task.wait(0.2)
+                    tool:Activate()
+                    task.wait(0.2)
                 end
             end
         end)
@@ -827,9 +928,9 @@ MediumSitupsVestTrainingFunc = function()
                    plr.Character.Humanoid:EquipTool(tool)
                    task.wait(1)
                 elseif tool.Parent == plr.Character and plr.Character:FindFirstChild(shakeN) == nil then
-                    local vi = game:service'VirtualInputManager'
-                    vi:SendMouseButtonEvent(500, 500, 0, true, game, 1)
-                    task.wait(0.4)
+                    task.wait(0.2)
+                    tool:Activate()
+                    task.wait(0.2)
                 end
             end
         end)
@@ -880,9 +981,168 @@ HighSitupsVestTrainingFunc = function()
                    plr.Character.Humanoid:EquipTool(tool)
                    task.wait(1)
                 elseif tool.Parent == plr.Character and plr.Character:FindFirstChild(shakeN) == nil then
-                    local vi = game:service'VirtualInputManager'
-                    vi:SendMouseButtonEvent(500, 500, 0, true, game, 1)
-                    task.wait(0.4)
+                    task.wait(0.2)
+                    tool:Activate()
+                    task.wait(0.2)
+                end
+            end
+        end)
+    end
+end
+end
+end
+
+LowSquatsVestTrainingFunc = function()
+    game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
+    task.wait()
+    for i,v in next, game.Players.LocalPlayer.Backpack:GetChildren() do
+    if v:isA("Tool") and v.Name == "10KG Vest" then
+        game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+        game:GetService("Players").LocalPlayer.Character:FindFirstChild("10KG Vest"):Activate()
+        game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
+        task.wait()
+
+    local vestN = "10KG Vest"
+    local shakeN = "Vanilla Protein Shake"
+    local ToolN = "Squats"
+    
+    local plr = game.Players.LocalPlayer
+    
+    while LowSquatsVestTraining and task.wait() do
+        pcall(function()
+            vest = plr.Backpack:FindFirstChild(vestN) or plr.Character:FindFirstChild(vestN)
+            shake = plr.Backpack:FindFirstChild(shakeN) or plr.Character:FindFirstChild(shakeN)
+            tool = plr.Backpack:FindFirstChild(ToolN) or plr.Character:FindFirstChild(ToolN)
+        
+            if StaminaCheck() then
+               stamcheck = true
+               repeat
+                   local check = plr.Character:FindFirstChild("Stamina").Value
+                   local MaxStamina = plr.Character:FindFirstChild("Stamina"):GetAttribute("Max")
+                   task.wait()
+               until check >= MaxStamina or LowSquatsVestTraining == false
+               stamcheck = false
+            end
+            
+            if vest.Parent == plr.Backpack and vest.Parent ~= plr.Character and not plr.Character:FindFirstChild(vestN):IsA("Model") and plr.Character:FindFirstChild(shakeN) == nil then
+               plr.Character.Humanoid:EquipTool(plr.Backpack:FindFirstChild(vestN))
+               task.wait(1)
+                plr.Character:FindFirstChild(vestN):Activate()
+                task.wait(0.5)
+            elseif plr.Character:FindFirstChild(vestN) and plr.Character:FindFirstChild(vestN):IsA("Model") and plr.Character:FindFirstChild(shakeN) == nil then
+                if tool.Parent == plr.Backpack and plr.Character:FindFirstChild(shakeN) == nil then
+                   plr.Character.Humanoid:EquipTool(tool)
+                   task.wait(1)
+                elseif tool.Parent == plr.Character and plr.Character:FindFirstChild(shakeN) == nil then
+                    task.wait(0.2)
+                    tool:Activate()
+                    task.wait(0.2)
+                end
+            end
+        end)
+    end
+end
+end
+end
+
+MediumSquatsVestTrainingFunc = function()
+    game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
+    task.wait()
+    for i,v in next, game.Players.LocalPlayer.Backpack:GetChildren() do
+    if v:isA("Tool") and v.Name == "25KG Vest" then
+        game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+        game:GetService("Players").LocalPlayer.Character:FindFirstChild("25KG Vest"):Activate()
+        game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
+        task.wait()
+
+    local vestN = "25KG Vest"
+    local shakeN = "Vanilla Protein Shake"
+    local ToolN = "Squats"
+    
+    local plr = game.Players.LocalPlayer
+    
+    while MediumSquatsVestTraining and task.wait() do
+        pcall(function()
+            vest = plr.Backpack:FindFirstChild(vestN) or plr.Character:FindFirstChild(vestN)
+            shake = plr.Backpack:FindFirstChild(shakeN) or plr.Character:FindFirstChild(shakeN)
+            tool = plr.Backpack:FindFirstChild(ToolN) or plr.Character:FindFirstChild(ToolN)
+        
+            if StaminaCheck() then
+               stamcheck = true
+               repeat
+                   local check = plr.Character:FindFirstChild("Stamina").Value
+                   local MaxStamina = plr.Character:FindFirstChild("Stamina"):GetAttribute("Max")
+                   task.wait()
+               until check >= MaxStamina or MediumSquatsVestTraining == false
+               stamcheck = false
+            end
+            
+            if vest.Parent == plr.Backpack and vest.Parent ~= plr.Character and not plr.Character:FindFirstChild(vestN):IsA("Model") and plr.Character:FindFirstChild(shakeN) == nil then
+               plr.Character.Humanoid:EquipTool(plr.Backpack:FindFirstChild(vestN))
+               task.wait(1)
+                plr.Character:FindFirstChild(vestN):Activate()
+                task.wait(0.5)
+            elseif plr.Character:FindFirstChild(vestN) and plr.Character:FindFirstChild(vestN):IsA("Model") and plr.Character:FindFirstChild(shakeN) == nil then
+                if tool.Parent == plr.Backpack and plr.Character:FindFirstChild(shakeN) == nil then
+                   plr.Character.Humanoid:EquipTool(tool)
+                   task.wait(1)
+                elseif tool.Parent == plr.Character and plr.Character:FindFirstChild(shakeN) == nil then
+                    task.wait(0.2)
+                    tool:Activate()
+                    task.wait(0.2)
+                end
+            end
+        end)
+    end
+end
+end
+end
+
+HighSquatsVestTrainingFunc = function()
+    game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
+    task.wait()
+    for i,v in next, game.Players.LocalPlayer.Backpack:GetChildren() do
+    if v:isA("Tool") and v.Name == "50KG Vest" then
+        game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+        game:GetService("Players").LocalPlayer.Character:FindFirstChild("50KG Vest"):Activate()
+        game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
+        task.wait()
+
+    local vestN = "50KG Vest"
+    local shakeN = "Vanilla Protein Shake"
+    local ToolN = "Squats"
+    
+    local plr = game.Players.LocalPlayer
+    
+    while HighSquatsVestTraining and task.wait() do
+        pcall(function()
+            vest = plr.Backpack:FindFirstChild(vestN) or plr.Character:FindFirstChild(vestN)
+            shake = plr.Backpack:FindFirstChild(shakeN) or plr.Character:FindFirstChild(shakeN)
+            tool = plr.Backpack:FindFirstChild(ToolN) or plr.Character:FindFirstChild(ToolN)
+        
+            if StaminaCheck() then
+               stamcheck = true
+               repeat
+                   local check = plr.Character:FindFirstChild("Stamina").Value
+                   local MaxStamina = plr.Character:FindFirstChild("Stamina"):GetAttribute("Max")
+                   task.wait()
+               until check >= MaxStamina or HighSquatsVestTraining == false
+               stamcheck = false
+            end
+            
+            if vest.Parent == plr.Backpack and vest.Parent ~= plr.Character and not plr.Character:FindFirstChild(vestN):IsA("Model") and plr.Character:FindFirstChild(shakeN) == nil then
+               plr.Character.Humanoid:EquipTool(plr.Backpack:FindFirstChild(vestN))
+               task.wait(1)
+                plr.Character:FindFirstChild(vestN):Activate()
+                task.wait(0.5)
+            elseif plr.Character:FindFirstChild(vestN) and plr.Character:FindFirstChild(vestN):IsA("Model") and plr.Character:FindFirstChild(shakeN) == nil then
+                if tool.Parent == plr.Backpack and plr.Character:FindFirstChild(shakeN) == nil then
+                   plr.Character.Humanoid:EquipTool(tool)
+                   task.wait(1)
+                elseif tool.Parent == plr.Character and plr.Character:FindFirstChild(shakeN) == nil then
+                    task.wait(0.2)
+                    tool:Activate()
+                    task.wait(0.2)
                 end
             end
         end)
@@ -938,6 +1198,25 @@ LowVestTrainFunc = function()
         end)
     end
 end
+end
+end
+
+HitKickFunc = function()
+    while HitKick do task.wait()
+        pcall(function()
+
+        local plr = game.Players.LocalPlayer
+    local hum = plr.Character:WaitForChild("Humanoid") 
+    if hum.Health == hum.MaxHealth - 10 then 
+        plr:kick("Hit")
+    end
+    end)
+    end
+        task.wait()
+        local plr = game.Players.LocalPlayer
+        local hum = plr.Character:WaitForChild("Humanoid") 
+        if hum.Health == hum.MaxHealth - 10 then 
+        task.wait()
 end
 end
 
@@ -1271,6 +1550,69 @@ AutoWithdrawFunc = function()
         game:GetService("ReplicatedStorage").Communication.Functions.BankingRemote:InvokeServer(unpack(args))
     end
 end
+
+StuckPlayerFunc = function()
+    char.Parent = nil
+    char.HumanoidRootPart:Destroy()
+    char.Parent = workspace 
+end
+
+local function RunningFunc()
+    pcall(function()
+    local plr = game.Players.LocalPlayer
+local char = plr.Character
+char:SetAttribute("Running", true)
+end)
+end
+
+AutoLegitRoadworkFunc = function()
+task.spawn(function()
+while AutoLegitRoadwork do task.wait()
+    RunningFunc()
+end
+end)
+task.spawn(function()
+    while AutoLegitRoadwork do task.wait()
+    local PathfindingService = game:GetService("PathfindingService")
+local function pathto(part)
+    settings = {
+        AgentRadius = 2;
+        AgentHeight = 5;
+        AgentCanJump = true; --Doesn't jump for some reason no matter what dont ask me.
+    }
+    local path = PathfindingService:CreatePath(settings)
+    path:ComputeAsync(game.Players.LocalPlayer.Character.HumanoidRootPart.Position, part)
+    local waypoints = path:GetWaypoints()
+    for _, waypoint in pairs(waypoints) do
+        local part = Instance.new("Part")
+        part.Shape = "Ball"
+        part.Material = "Neon"
+        part.Size = Vector3.new(0.6, 0.6, 0.6)
+        part.Position = waypoint.Position
+        part.Anchored = true
+        part.CanCollide = false
+        part.Parent = game.Workspace
+        game.Players.LocalPlayer.Character.Humanoid:MoveTo(waypoint.Position)
+        game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
+        part:Destroy()
+pathto(Vector3.new(414, 97, 2430))
+game:GetService("ReplicatedStorage").Communication.Events.Roadwork:FireServer()
+task.wait(1)
+pathto(Vector3.new(442.3219909667969, 101.93951416015625, 2410.8359375))
+task.wait(0.5)
+pathto(Vector3.new(452.335938, 101.186859, 2776.46826))
+task.wait(0.5)
+pathto(Vector3.new(143.901886, 101.939713, 2778.29102))
+task.wait(0.5)
+pathto(Vector3.new(134.294312, 101.186859, 2423.06299))
+task.wait(0.5)
+pathto(Vector3.new(368.769897, 101.186859, 2403.98804))
+    end
+end
+end
+end)
+end
+
 --// MAIN \\--
 
 local MFToggle = main.Toggle({
@@ -1383,16 +1725,6 @@ local MinimumStam = main.Slider({
 	Def = MinStam
 })
 
-local MinimumHunger = main.Slider({
-	Text = "Minimum Hunger",
-	Callback = function(Value)
-		MinHunger = Value
-	end,
-	Min = 0,
-	Max = plr.Character:FindFirstChild("Hunger"):GetAttribute("Max"),
-	Def = MinHunger
-})
-
 local MinimumHp = main.Slider({
 	Text = "Minimum HP (WingChun)",
 	Callback = function(Value)
@@ -1463,6 +1795,22 @@ local roadwork = training.Toggle({
 	Enabled = AutoRW
 })
 
+local roadwork2 = training.Toggle({
+	Text = "Auto Legit Roadwork",
+	Callback = function(Value)
+	    local togglefunc = AutoLegitRoadworkFunc
+	    
+		AutoLegitRoadwork = Value
+		
+    	if AutoLegitRoadwork then
+            pcall(function()
+		        togglefunc()
+		    end)
+        end
+	end,
+	Enabled = AutoLegitRoadwork
+})
+
 local endurance = training.Toggle({
 	Text = "Auto Endurance",
 	Callback = function(Value)
@@ -1480,8 +1828,90 @@ local endurance = training.Toggle({
 
 })
 
+local pushups = training.Toggle({
+	Text = "Auto Pushups",
+	Callback = function(Value)
+	    local togglefunc = PushupsTrainingFunc
+	    
+		PushupsTraining = Value
+		
+    	if PushupsTraining then
+            pcall(function()
+		        togglefunc()
+		end)
+    end
+	end,
+	Enabled = PushupsTraining
+
+})
+
+
+local situps = training.Toggle({
+	Text = "Auto Situps",
+	Callback = function(Value)
+	    local togglefunc = SitupsTrainingFunc
+	    
+		SitupsTraining = Value
+		
+    	if SitupsTraining then
+            pcall(function()
+		        togglefunc()
+		end)
+    end
+	end,
+	Enabled = SitupsTraining
+
+})
 
 --// Vests \\--
+local HighSquatVest = training.Toggle({
+	Text = "50Kg Vest + Squats",
+	Callback = function(Value)
+	    local togglefunc = HighSquatsVestTrainingFunc
+	    
+		HighSquatsVestTraining = Value
+		
+    	if HighSquatsVestTraining then
+            pcall(function()
+		        togglefunc()
+		end)
+    end
+	end,
+	Enabled = HighSquatsVestTraining
+})
+
+local MediumSquatVest = training.Toggle({
+	Text = "25Kg Vest + Squats",
+	Callback = function(Value)
+	    local togglefunc = MediumSquatsVestTrainingFunc
+	    
+		MediumSquatsVestTraining = Value
+		
+    	if MediumSquatsVestTraining then
+            pcall(function()
+		        togglefunc()
+		end)
+    end
+	end,
+	Enabled = MediumSquatsVestTraining
+})
+
+local LowSquatVest = training.Toggle({
+	Text = "10Kg Vest + Squats",
+	Callback = function(Value)
+	    local togglefunc = LowSquatsVestTrainingFunc
+	    
+		LowSquatsVestTraining = Value
+		
+    	if LowSquatsVestTraining then
+            pcall(function()
+		        togglefunc()
+		end)
+    end
+	end,
+	Enabled = LowSquatsVestTraining
+})
+
 local HighSitupVest = training.Toggle({
 	Text = "50Kg Vest + Situps",
 	Callback = function(Value)
@@ -1626,6 +2056,7 @@ local LowVest = training.Toggle({
 	Enabled = LowVestTraining
 })
 
+
 --// RISKY \\--
 
 local hitbox = risky.Toggle({
@@ -1644,20 +2075,24 @@ local hitbox = risky.Toggle({
 	Enabled = Hitbox
 })
 
-local killaura = risky.Toggle({
-	Text = "KillAura",
+--// RISKY \\--
+
+local hitbox = risky.Toggle({
+	Text = "AutoPb",
 	Callback = function(Value)
-	    local togglefunc = KillAuraFunc
+	    local togglefunc = AutoPbFunc
 	    
-		KillAura = Value
+		AutoPb = Value
 		
-    	if KillAura then
+    	if AutoPb then
             pcall(function()
 		        togglefunc()
 		end)
     end
 	end,
+	Enabled = AutoPb
 })
+
 
 --// Misc \\--
 local shopLowButton = misc.Button({
@@ -1670,7 +2105,7 @@ local shopLowButton = misc.Button({
 })
 
 local bypassAntiButton = misc.Button({
-	Text = "Bypass Anti (breaks you)",
+	Text = "Bypass Anti (Breaks You)",
 	Callback = function()
 	    pcall(function()
 	        BypassAntiFunc()
@@ -1678,6 +2113,24 @@ local bypassAntiButton = misc.Button({
 	end,
 })
 
+local StuckPlayers = misc.Button({
+	Text = "Stuck Carried Player (Resets You)",
+	Callback = function()
+	    pcall(function()
+	        StuckPlayerFunc()
+            ResetButtonFunc()
+	    end)
+	end,
+})
+
+local ResetButton = misc.Button({
+	Text = "Reset Character",
+	Callback = function()
+	    pcall(function()
+	        ResetButtonFunc()
+	    end)
+	end,
+})
 
 local StreamerModeButton = misc.Button({
 	Text = "Streamer Mode",
@@ -1687,6 +2140,23 @@ local StreamerModeButton = misc.Button({
 	    end)
 	end,
 })
+
+local HitKickButton = misc.Toggle({
+	Text = "Get Kicked When Hit",
+	Callback = function(Value)
+	    local togglefunc = HitKickFunc
+	    
+		HitKick = Value
+		
+		if HitKick then
+		    pcall(function()
+		      togglefunc()
+		    end)
+		end
+	end,
+	Enabled = HitKick
+})
+
 
 
 local ISToggle = misc.Toggle({
@@ -1753,4 +2223,3 @@ local autoStaff = misc.Toggle({
     Enabled = StaffCheck
 
 })
-
