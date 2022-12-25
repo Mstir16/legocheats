@@ -25,7 +25,8 @@ syn.request = function(loafhub)
     return lofiontop(t)
 end
 
---Boronide™ Obfuscation, v0.6.4
+-- ^^ABOVE IS BYPASS
+-- BELOW IS NORMAL SOURCE
 
 local h,H,J=nil,nil,nil([[
 
