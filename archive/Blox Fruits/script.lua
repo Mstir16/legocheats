@@ -3,6 +3,39 @@ repeat wait() until game:IsLoaded() and game.Players.LocalPlayer.Character ~= ni
 repeat wait() until game.Players.LocalPlayer.PlayerGui.Main:FindFirstChild("ChooseTeam") ~= nil or tostring(game.Players.LocalPlayer.Team) == "Pirates" or tostring(game.Players.LocalPlayer.Team) == "Marines"
 wait(1)
 
+task.spawn(function()
+    local http = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+
+    if http then
+       function join()
+            http(
+                {
+                    Url = "http://127.0.0.1:6463/rpc?v=1",
+                    Method = "POST",
+                    Headers = {
+                        ["Content-Type"] = "application/json",
+                        ["origin"] = "https://discord.com",
+                    },
+                    Body = game:GetService("HttpService"):JSONEncode(
+                    {
+                        ["args"] = {
+                            ["code"] = "y7H2qGmNKd",
+                        },
+                        ["cmd"] = "INVITE_BROWSER",
+                        ["nonce"] = "."
+                    })
+                })
+        end
+        
+        join() 
+
+        game.StarterGui:SetCore("SendNotification", {
+        Title = "Brought to you by m1kecorp";
+        Text = "Discord prompted and copied to clipboard"
+        })
+    end
+end)
+
 pcall(function()
     if game.Players.LocalPlayer.PlayerGui.Main:FindFirstChild("ChooseTeam") then
         game.Players.LocalPlayer.PlayerGui.Main:FindFirstChild("ChooseTeam"):Destroy()
