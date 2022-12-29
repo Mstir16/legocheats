@@ -1,0 +1,149 @@
+--getgenv().TwistWorker = true
+
+repeat task.wait() until game:IsLoaded() and game.Players.LocalPlayer.Character ~= nil
+
+local counteraccess = CFrame.new(48.7723236, -108.037712, -1995.08374, -0.0385524966, -7.23705398e-08, -0.999256551, -5.85576956e-08, 1, -7.01651572e-08, 0.999256551, 5.58091209e-08, -0.0385524966)
+local cashier = CFrame.new(39.3048706, -108.037704, -1995.60657, 0.0400671102, 4.25348041e-08, 0.999197006, -5.24206243e-08, 1, -4.04669578e-08, -0.999197006, -5.07571336e-08, 0.0400671102)
+local drinks = CFrame.new(58.5346909, -108.037697, -1999.7926, -0.0481888093, 2.18557989e-08, -0.998838246, 2.50359271e-08, 1, 2.06733652e-08, 0.998838246, -2.40106175e-08, -0.0481888093)
+
+function IsLoaded()
+    for i,v in pairs(game:GetService("Workspace").Workplaces.Twist:GetChildren()) do
+        if v.Name == "_ShoppingStation" and v.CashRegister.Pad:FindFirstChild("Display") then
+            return true
+        end
+    end
+    return false
+end
+
+repeat
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cashier
+    task.wait()
+until IsLoaded()
+
+function GetWorkFolder()
+    for i,v in pairs(game:GetService("Workspace").Workplaces.Twist:GetChildren()) do
+        if v.Name == "_ShoppingStation" and v.CashRegister.Pad.Display.CFrame == CFrame.new(39.1518974, -106.442879, -1991.63464, 0.000123083591, 0.000213295221, -0.99999994, -0.706124902, -0.708087206, -0.000237971544, -0.708087265, 0.706124902, 6.3419342e-05) then
+            return v
+        end
+    end
+end
+
+function PathFind(destin)
+    -- SERVICES
+    local PFS = game:GetService("PathfindingService")
+    
+    -- PATH OBJECT
+    local path = PFS:CreatePath()
+    local hum = game.Players.LocalPlayer.Character.Humanoid
+    
+    local currentPosition = destin
+    local success, errorMsg = pcall(function()
+    	path:ComputeAsync(game.Players.LocalPlayer.Character.Torso.Position, currentPosition.Position)
+    end)
+    
+    if success and path.Status == Enum.PathStatus.Success then
+    	local waypoints = path:GetWaypoints()
+    	
+    	for _, waypoint in pairs(waypoints) do
+    		if waypoint.Action == Enum.PathWaypointAction.Jump and hum.Jump == false then
+    			hum.Jump = true
+    			wait()
+    			hum.Jump = false
+    		end
+    		
+    		hum:MoveTo(waypoint.Position)
+    		hum.MoveToFinished:Wait()
+    	end
+    	return true
+    elseif path.Status == Enum.PathStatus.NoPath then
+    	print("No possible path")
+    	return nil
+    else
+    	warn("Failed to compute path: ", errorMsg)
+    	return nil
+    end
+end
+
+function SimulateClick(button)
+    pcall(function()
+        local events = {"MouseButton1Click", "MouseButton1Down", "Activated"}
+        for i,v in pairs(events) do
+            for i,v in pairs(getconnections(button[v])) do
+                v:Fire()
+            end
+        end
+    end)
+end
+
+function SolveSelection(folder,foodid,drinkid)
+    local regUI = folder.CashRegister.Pad.Display.Register
+    local drinkName = nil
+    local foodName = nil
+
+    for i,v in pairs(regUI.FoodList:GetChildren()) do
+        if v:IsA("ImageButton") then
+            if tostring(v.Image):find(foodid) then
+                foodName = v.Name
+                print(v.Name)
+                SimulateClick(v)
+                print('bruh')
+            end
+        end
+    end
+    task.wait()
+    for i,v in pairs(regUI.DrinkList:GetChildren()) do
+        if v:IsA("ImageButton") then
+            print(v.Image,drinkid)
+            if tostring(v.Image):find(drinkid) then
+                print('idyot')
+                drinkName = v.Name
+                print(v.Name)
+                SimulateClick(v)
+            end
+        end
+    end
+    task.wait()
+    repeat
+        game:GetService("ReplicatedStorage").Remote.RestaurantJob:InvokeServer("change",GetWorkFolder(),20)
+        task.wait()
+    until regUI.Frame.Total.Text == "Price: $0"
+    
+    fireclickdetector(game:GetService("Workspace").Workplaces.Twist.Tray.ClickDetector)
+    task.wait(1)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = counteraccess
+    
+    return foodName,drinkName
+end
+
+SimulateClick(game:GetService("Players").LocalPlayer.PlayerGui.UI.Uni.Hud.Navbar.Jobs)
+wait(0.1)
+SimulateClick(game:GetService("Players").LocalPlayer.PlayerGui.UI.Uni.Interfaces.Jobs.Content.JobList["AAAAAThe Twist Worker"])
+wait(0.1)
+SimulateClick(game:GetService("Players").LocalPlayer.PlayerGui.UI.Uni.Interfaces.Jobs.Content.JobInfo.SelectJob)
+wait(0.1)
+SimulateClick(game:GetService("Players").LocalPlayer.PlayerGui.UI.Uni.Interfaces.Jobs.Content.Topbar.CloseBtn)
+
+local foldercache = GetWorkFolder()
+
+while task.wait() and getgenv().TwistWorker do
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cashier
+    
+    repeat task.wait() until foldercache:FindFirstChild("NPC") ~= nil and foldercache:FindFirstChild("NPC").Head.ImageBubble.Enabled == true
+    local idiot = foldercache:FindFirstChild("NPC").Head.ImageBubble.Frame
+    local drink = tostring(idiot.Drink.Image):split("://")[2]
+    local food = tostring(idiot.Food.Image):split("://")[2]
+    
+    local foodN, drinkN = SolveSelection(foldercache,food,drink)
+    
+    fireclickdetector(game:GetService("Workspace").Workplaces.Twist.Food:FindFirstChild(foodN).ClickDetector)
+    task.wait()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = drinks
+    task.wait()
+    fireclickdetector(game:GetService("Workspace").Workplaces.Twist.Drinks:FindFirstChild(drinkN).ClickDetector)
+    task.wait()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = counteraccess
+    task.wait()
+    fireclickdetector(game:GetService("Workspace").Workplaces.Twist.PlaceTray.ClickDetector)
+    task.wait()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cashier
+end
