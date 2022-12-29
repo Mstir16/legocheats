@@ -1,6 +1,6 @@
 --loadstring(game:HttpGet("https://raw.githubusercontent.com/Mstir16/legocheats/main/archive/Blox%20Fruits/script.lua"))()
 repeat wait() until game:IsLoaded() and game.Players.LocalPlayer.Character ~= nil and game.Players.LocalPlayer:FindFirstChild("PlayerGui") ~= nil
-repeat wait() until game.Players.LocalPlayer.PlayerGui.Main:FindFirstChild("ChooseTeam") ~= nil
+repeat wait() until game.Players.LocalPlayer.PlayerGui.Main:FindFirstChild("ChooseTeam") ~= nil or tostring(game.Players.LocalPlayer.Team) == "Pirates" or tostring(game.Players.LocalPlayer.Team) == "Marines"
 wait(1)
 
 pcall(function()
