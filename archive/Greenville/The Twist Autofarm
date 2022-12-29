@@ -28,42 +28,6 @@ function GetWorkFolder()
     end
 end
 
-function PathFind(destin)
-    -- SERVICES
-    local PFS = game:GetService("PathfindingService")
-    
-    -- PATH OBJECT
-    local path = PFS:CreatePath()
-    local hum = game.Players.LocalPlayer.Character.Humanoid
-    
-    local currentPosition = destin
-    local success, errorMsg = pcall(function()
-    	path:ComputeAsync(game.Players.LocalPlayer.Character.Torso.Position, currentPosition.Position)
-    end)
-    
-    if success and path.Status == Enum.PathStatus.Success then
-    	local waypoints = path:GetWaypoints()
-    	
-    	for _, waypoint in pairs(waypoints) do
-    		if waypoint.Action == Enum.PathWaypointAction.Jump and hum.Jump == false then
-    			hum.Jump = true
-    			wait()
-    			hum.Jump = false
-    		end
-    		
-    		hum:MoveTo(waypoint.Position)
-    		hum.MoveToFinished:Wait()
-    	end
-    	return true
-    elseif path.Status == Enum.PathStatus.NoPath then
-    	print("No possible path")
-    	return nil
-    else
-    	warn("Failed to compute path: ", errorMsg)
-    	return nil
-    end
-end
-
 function SimulateClick(button)
     pcall(function()
         local events = {"MouseButton1Click", "MouseButton1Down", "Activated"}
@@ -145,5 +109,7 @@ while task.wait() and getgenv().TwistWorker do
     task.wait()
     fireclickdetector(game:GetService("Workspace").Workplaces.Twist.PlaceTray.ClickDetector)
     task.wait()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = counteraccess
+    task.wait(1)
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cashier
 end
