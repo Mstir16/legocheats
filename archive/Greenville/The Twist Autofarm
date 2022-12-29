@@ -2,7 +2,7 @@
 
 repeat task.wait() until game:IsLoaded() and game.Players.LocalPlayer.Character ~= nil
 
-local counteraccess = CFrame.new(42.0594025, -108.037712, -1995.34802, 0.0183682926, -6.9189241e-08, -0.999831259, 6.86208468e-09, 1, -6.90748507e-08, 0.999831259, -5.59214008e-09, 0.0183682926)
+local counteraccess = CFrame.new(47.0836143, -108.037712, -1995.245, 0.0212311242, -5.21081063e-08, -0.999774575, 4.54226123e-09, 1, -5.20233954e-08, 0.999774575, -3.43672224e-09, 0.0212311242)
 local cashier = CFrame.new(39.3048706, -108.037704, -1995.60657, 0.0400671102, 4.25348041e-08, 0.999197006, -5.24206243e-08, 1, -4.04669578e-08, -0.999197006, -5.07571336e-08, 0.0400671102)
 local drinks = CFrame.new(58.5346909, -108.037697, -1999.7926, -0.0481888093, 2.18557989e-08, -0.998838246, 2.50359271e-08, 1, 2.06733652e-08, 0.998838246, -2.40106175e-08, -0.0481888093)
 
@@ -74,8 +74,6 @@ function SolveSelection(folder,foodid,drinkid)
     
     fireclickdetector(game:GetService("Workspace").Workplaces.Twist.Tray.ClickDetector)
     task.wait(1)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = counteraccess
-    
     return foodName,drinkName
 end
 
@@ -99,6 +97,10 @@ while task.wait() and getgenv().TwistWorker do
     
     local foodN, drinkN = SolveSelection(foldercache,food,drink)
     
+    fireclickdetector(game:GetService("Workspace").Workplaces.Twist.Food:FindFirstChild(foodN).ClickDetector)
+    task.wait()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = counteraccess
+    task.wait()
     fireclickdetector(game:GetService("Workspace").Workplaces.Twist.Food:FindFirstChild(foodN).ClickDetector)
     task.wait()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = drinks
