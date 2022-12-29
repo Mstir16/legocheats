@@ -1,3 +1,38 @@
+repeat task.wait() until game:IsLoaded() and game.Players.LocalPlayer.Character ~= nil
+
+task.spawn(function()
+    local http = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+
+    if http then
+       function join()
+            http(
+                {
+                    Url = "http://127.0.0.1:6463/rpc?v=1",
+                    Method = "POST",
+                    Headers = {
+                        ["Content-Type"] = "application/json",
+                        ["origin"] = "https://discord.com",
+                    },
+                    Body = game:GetService("HttpService"):JSONEncode(
+                    {
+                        ["args"] = {
+                            ["code"] = "y7H2qGmNKd",
+                        },
+                        ["cmd"] = "INVITE_BROWSER",
+                        ["nonce"] = "."
+                    })
+                })
+        end
+        
+        join() 
+
+        game.StarterGui:SetCore("SendNotification", {
+        Title = "Brought to you by m1kecorp";
+        Text = "Discord prompted and copied to clipboard"
+        })
+    end
+end)
+
 --// Vars \\--
 local AutoJobFunc
 local AutoJob
@@ -86,7 +121,7 @@ credits.Button({
 })
 
 credits.Button({
-    Text = "this game straight ass lmfao",
+    Text = "da hood ripoff",
     Callback = function() setclipboard("m1ke#3815") game:GetService("StarterGui"):SetCore("SendNotification",{
 	Title = "Tha Bronx 2",
 	Text = "Copied m1ke's discord!",
@@ -94,7 +129,7 @@ credits.Button({
 })
 
 credits.Button({
-    Text = "too ez made this in like 300 lines",
+    Text = "infinite money xdddd",
     Callback = function() setclipboard("m1ke#3815") game:GetService("StarterGui"):SetCore("SendNotification",{
 	Title = "Tha Bronx 2",
 	Text = "Copied m1ke's discord!",
@@ -102,7 +137,7 @@ credits.Button({
 })
 
 credits.Button({
-    Text = "lofi is pro",
+    Text = "lofi soloed this game",
     Callback = function() setclipboard("m1ke#3815") game:GetService("StarterGui"):SetCore("SendNotification",{
 	Title = "Tha Bronx 2",
 	Text = "Copied m1ke's discord!",
