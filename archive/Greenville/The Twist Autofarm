@@ -95,7 +95,7 @@ while task.wait() and getgenv().TwistWorker do
     
     local fooddist = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - game:GetService("Workspace").Workplaces.Twist.Food:FindFirstChild(foodN).Position).magnitude
     
-    if fooddist >= 5 then
+    if fooddist >= 6 then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = counteraccess
     end
     
