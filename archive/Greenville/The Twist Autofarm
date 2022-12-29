@@ -48,9 +48,7 @@ function SolveSelection(folder,foodid,drinkid)
         if v:IsA("ImageButton") then
             if tostring(v.Image):find(foodid) then
                 foodName = v.Name
-                print(v.Name)
                 SimulateClick(v)
-                print('bruh')
             end
         end
     end
@@ -59,9 +57,7 @@ function SolveSelection(folder,foodid,drinkid)
         if v:IsA("ImageButton") then
             print(v.Image,drinkid)
             if tostring(v.Image):find(drinkid) then
-                print('idyot')
                 drinkName = v.Name
-                print(v.Name)
                 SimulateClick(v)
             end
         end
