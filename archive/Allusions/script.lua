@@ -62,41 +62,43 @@ end)
 Allusions:NewToggle("Auto Minos Prime", "Auto Minos Prime", function(state)
     getgenv().TP = state
     while getgenv().TP == true do
-        if game:GetService("Workspace").Miscellaneous:FindFirstChild("MinosTorch") ~= nil then
-            local function GetTorchStand()
-                for i,v in pairs(game:GetService("Workspace").Miscellaneous:GetChildren()) do
-                    if v.Name == "Stand" and v:FindFirstChild("ProximityPrompt") == nil then
-                        local minotorch = game:GetService("Workspace").Miscellaneous:FindFirstChild("MinosTorch")
-                        local distance = (minotorch.Position - v.Position).magnitude
-                        
-                        if distance <= 7 then
-                            return  game:GetService("Workspace").Miscellaneous:FindFirstChild("MinosTorch")
+        pcall(function()
+            if game:GetService("Workspace").Miscellaneous:FindFirstChild("MinosTorch") ~= nil then
+                local function GetTorchStand()
+                    for i,v in pairs(game:GetService("Workspace").Miscellaneous:GetChildren()) do
+                        if v.Name == "Stand" and v:FindFirstChild("ProximityPrompt") == nil then
+                            local minotorch = game:GetService("Workspace").Miscellaneous:FindFirstChild("MinosTorch")
+                            local distance = (minotorch.Position - v.Position).magnitude
+
+                            if distance <= 7 then
+                                return  game:GetService("Workspace").Miscellaneous:FindFirstChild("MinosTorch")
+                            end
                         end
                     end
                 end
-            end
-            
-            local function GetActivateStand()
-                for i,v in pairs(game:GetService("Workspace").Miscellaneous:GetChildren()) do
-                    if v.Name == "Stand" and v:FindFirstChild("ProximityPrompt") ~= nil then
-                        return v
+
+                local function GetActivateStand()
+                    for i,v in pairs(game:GetService("Workspace").Miscellaneous:GetChildren()) do
+                        if v.Name == "Stand" and v:FindFirstChild("ProximityPrompt") ~= nil then
+                            return v
+                        end
                     end
                 end
+
+                local Torch = GetTorchStand()
+                local SpawnStand = GetActivateStand()
+
+                if Torch ~= nil and SpawnStand ~= nil then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Torch.CFrame
+                    task.wait(0.5)
+                    fireproximityprompt(Torch.ProximityPrompt)
+                    task.wait(0.5)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = SpawnStand.CFrame
+                    task.wait(0.5)
+                    fireproximityprompt(SpawnStand.ProximityPrompt)
+                    task.wait(2)
+                end
             end
-            
-            local Torch = GetTorchStand()
-            local SpawnStand = GetActivateStand()
-            
-            if Torch ~= nil and SpawnStand ~= nil then
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Torch.CFrame
-                task.wait(0.5)
-                fireproximityprompt(Torch.ProximityPrompt)
-                task.wait(0.5)
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = SpawnStand.CFrame
-                task.wait(0.5)
-                fireproximityprompt(SpawnStand.ProximityPrompt)
-                task.wait(2)
-            end
-        end
+        end)
     end
 end)
