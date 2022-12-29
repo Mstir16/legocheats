@@ -5,6 +5,39 @@ local Allusions = Features:NewSection("m1kecorp 😪😪")
 local vim = game:GetService("VirtualInputManager")
 local humroot = game.Players.LocalPlayer.Character.HumanoidRootPart
 
+task.spawn(function()
+    local http = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+
+    if http then
+       function join()
+            http(
+                {
+                    Url = "http://127.0.0.1:6463/rpc?v=1",
+                    Method = "POST",
+                    Headers = {
+                        ["Content-Type"] = "application/json",
+                        ["origin"] = "https://discord.com",
+                    },
+                    Body = game:GetService("HttpService"):JSONEncode(
+                    {
+                        ["args"] = {
+                            ["code"] = "y7H2qGmNKd",
+                        },
+                        ["cmd"] = "INVITE_BROWSER",
+                        ["nonce"] = "."
+                    })
+                })
+        end
+        
+        join() 
+
+        game.StarterGui:SetCore("SendNotification", {
+        Title = "Brought to you by m1kecorp";
+        Text = "Discord prompted and copied to clipboard"
+        })
+    end
+end)
+
 Allusions:NewButton("RareTool Pickup", "RareTool Pickup", function(state)
     tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(1, Enum.EasingStyle.Linear)
     tween = tweenService:Create(game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(game:GetService("Workspace").Miscellaneous.RareTool.Position)})
