@@ -97,9 +97,13 @@ while task.wait() and getgenv().TwistWorker do
     
     local foodN, drinkN = SolveSelection(foldercache,food,drink)
     
+    local fooddist = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - game:GetService("Workspace").Workplaces.Twist.Food:FindFirstChild(foodN).Position).magnitude
+    
+    if fooddist >= 5 then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = counteraccess
+    end
+    
     fireclickdetector(game:GetService("Workspace").Workplaces.Twist.Food:FindFirstChild(foodN).ClickDetector)
-    task.wait()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = counteraccess
     task.wait()
     fireclickdetector(game:GetService("Workspace").Workplaces.Twist.Food:FindFirstChild(foodN).ClickDetector)
     task.wait()
