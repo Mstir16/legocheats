@@ -96,6 +96,7 @@ Allusions:NewToggle("Auto Minos Prime", "Auto Minos Prime", function(state)
     getgenv().TP = state
     while getgenv().TP == true do
         pcall(function()
+            task.wait()
             if game:GetService("Workspace").Miscellaneous:FindFirstChild("MinosTorch") ~= nil then
                 local function GetTorchStand()
                     for i,v in pairs(game:GetService("Workspace").Miscellaneous:GetChildren()) do
@@ -140,6 +141,7 @@ Allusions:NewToggle("Auto Lord Cinder", "Auto Lord Cinder", function(state)
     getgenv().TP = state
     while getgenv().TP == true do
         pcall(function()
+            task.wait()
             if game:GetService("Workspace").Miscellaneous:FindFirstChild("Bonfire") ~= nil then
                 if game:GetService("Workspace").Miscellaneous.Bonfire:FindFirstChild("Sword") and game:GetService("Workspace").Miscellaneous.Bonfire.Sword:FindFirstChild("ProximityPrompt") then
                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Miscellaneous.Bonfire:FindFirstChild("Sword").CFrame
