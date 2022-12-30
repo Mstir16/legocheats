@@ -136,7 +136,7 @@ Allusions:NewToggle("Auto Minos Prime", "Auto Minos Prime", function(state)
     end
 end)
 
-Allusions:NewToggle("Auto Cinder Sword", "Auto Cinder Sword", function(state)
+Allusions:NewToggle("Auto Lord Cinder", "Auto Lord Cinder", function(state)
     getgenv().TP = state
     while getgenv().TP == true do
         pcall(function()
@@ -145,6 +145,7 @@ Allusions:NewToggle("Auto Cinder Sword", "Auto Cinder Sword", function(state)
                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Miscellaneous.Bonfire:FindFirstChild("Sword").CFrame
                     task.wait(0.5)
                     fireproximityprompt(game:GetService("Workspace").Miscellaneous.Bonfire:FindFirstChild("Sword").ProximityPrompt)
+                    task.wait(2)
                 end
             end
         end)
