@@ -141,7 +141,7 @@ Allusions:NewToggle("Auto Lord Cinder", "Auto Lord Cinder", function(state)
     while getgenv().TP == true do
         pcall(function()
             if game:GetService("Workspace").Miscellaneous:FindFirstChild("Bonfire") ~= nil then
-                if game:GetService("Workspace").Miscellaneous.Bonfire:FindFirstChild("Sword") and game:GetService("Workspace").Miscellaneous.Bonfire.Sword:FindFirstChild("ProximityPrompt) then
+                if game:GetService("Workspace").Miscellaneous.Bonfire:FindFirstChild("Sword") and game:GetService("Workspace").Miscellaneous.Bonfire.Sword:FindFirstChild("ProximityPrompt") then
                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Miscellaneous.Bonfire:FindFirstChild("Sword").CFrame
                     task.wait(0.5)
                     fireproximityprompt(game:GetService("Workspace").Miscellaneous.Bonfire:FindFirstChild("Sword").ProximityPrompt)
