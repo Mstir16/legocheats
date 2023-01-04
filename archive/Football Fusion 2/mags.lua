@@ -44,6 +44,13 @@ task.spawn(function()
     end
 end)
 
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Script is patched!";
+    Text = "Open sourced on github if you want to make one"
+})
+
+return
+
 function GetBall()
     for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
         if v.Name == "Football" and v:IsA("Part") and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.Position).Magnitude <= MAGDISTANCE then
