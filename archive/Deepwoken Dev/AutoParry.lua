@@ -2,9 +2,9 @@
 made by sweety#3848 (sponsored by m1kecorp XD)
 
 discord.gg/m1kecorp or https://discord.gg/y7H2qGmNKd
-
-Animations for auto parry :) (add what u want to parry) *it's not an ignore list*
 ]]-- 
+
+-- Animations for auto parry :) (add what u want to parry) *it's not an ignore list*
 local hehe = {
     "rbxassetid://6241709963",
     "rbxassetid://4954439454",
