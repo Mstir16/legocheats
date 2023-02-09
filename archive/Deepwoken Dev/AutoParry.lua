@@ -12,6 +12,8 @@ local hehe = {
     "rbxassetid://4954439454"
 }
 
+local auto_parry_boolean_hehe_lol_skull = false
+
 -- Auto Parry stuff :)
 
 -- This function checks if there is any player within a range of 13 studs from the local player's character.
@@ -52,6 +54,6 @@ local function parry_if_sound_playing()
     end
 end
 
-while task.wait() and getgenv().auto_parry_boolean_hehe_lol_skull == true do
+while task.wait() and auto_parry_boolean_hehe_lol_skull do
     parry_if_sound_playing()
 end
