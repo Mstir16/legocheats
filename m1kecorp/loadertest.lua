@@ -3,7 +3,7 @@ pcall(function()
 http = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 end)
 
-if http == nil then return end
+if http == nil then return print("unsupported exploit - LOADER") end
 
 local function GetGames()
    local response = http({
@@ -24,6 +24,7 @@ for i,v in pairs(GamesList) do
     local script_name = v["name"]
     
     if script_name:find(tostring(PID)) then
+        print("loaded "..script_name.." - LOADER")
         loadstring(game:HttpGet(script))()
         break
     end
