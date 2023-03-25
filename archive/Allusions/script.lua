@@ -153,3 +153,20 @@ Allusions:NewToggle("Auto Lord Cinder", "Auto Lord Cinder", function(state)
         end)
     end
 end)
+
+Allusions:NewToggle("Auto Black Silence", "Auto Black Silence", function(state)
+    getgenv().TP = state
+    while getgenv().TP == true do
+        pcall(function()
+            task.wait()
+            for i,v in pairs(game:GetService("Workspace").Miscellaneous:GetChildren()) do
+                if v:FindFirstChild("Whispers") then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+                    task.wait(0.5)
+                    fireproximityprompt(v.ProximityPrompt)
+                    task.wait(0.5)
+                end
+            end
+        end)
+    end
+end)
