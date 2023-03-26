@@ -42,7 +42,7 @@ end)
 
 Combat:NewToggle("Inf Dozerify", "Inf Dozerify", function(state)
     getgenv().TP = state
-    while getgenv().TP == true do
+    while getgenv().TP == true and task.wait() do
         pcall(function()
             if game.Players.LocalPlayer.Character:FindFirstChild("Dozerify") then
                 game.Players.LocalPlayer.Character:FindFirstChild("Dozerify"):Destroy()
@@ -53,7 +53,7 @@ end)
 
 Combat:NewToggle("Inf Russian Vitamins", "Inf Russian Vitamins", function(state)
     getgenv().TP = state
-    while getgenv().TP == true do
+    while getgenv().TP == true and task.wait() do
         pcall(function()
             if game.Lighting:FindFirstChild("Atmosphere") then
                 game.Lighting.Atmosphere:Destroy()
@@ -74,7 +74,7 @@ end)
 
 Combat:NewToggle("Inf Candy Bag Buffs", "Inf Candy Bag Buffs", function(state)
     getgenv().TP = state
-    while getgenv().TP == true do
+    while getgenv().TP == true and task.wait() do
         pcall(function()
             local lucky = {"Red","Blue","Yellow"}
             
@@ -120,9 +120,8 @@ Farms:NewToggle("Auto Finance King (EQUIP)", "Auto Finance King (EQUIP)", functi
         end)
     end
     
-    while getgenv().TP == true do
+    while getgenv().TP == true and task.wait() do
         pcall(function()
-            task.wait()
             for _,k in pairs(game:GetService("Workspace").Alive:GetChildren()) do
                 if k.Name == "FinanceKing" then
                     repeat
@@ -149,9 +148,8 @@ end)
 
 Farms:NewToggle("Auto Minos Prime", "Auto Minos Prime", function(state)
     getgenv().TP = state
-    while getgenv().TP == true do
+    while getgenv().TP == true and task.wait() do
         pcall(function()
-            task.wait()
             if game:GetService("Workspace").Miscellaneous:FindFirstChild("MinosTorch") ~= nil then
                 local function GetTorchStand()
                     for i,v in pairs(game:GetService("Workspace").Miscellaneous:GetChildren()) do
@@ -194,9 +192,8 @@ end)
 
 Farms:NewToggle("Auto Lord Cinder", "Auto Lord Cinder", function(state)
     getgenv().TP = state
-    while getgenv().TP == true do
+    while getgenv().TP == true and task.wait() do
         pcall(function()
-            task.wait()
             if game:GetService("Workspace").Miscellaneous:FindFirstChild("Bonfire") ~= nil then
                 if game:GetService("Workspace").Miscellaneous.Bonfire:FindFirstChild("Sword") and game:GetService("Workspace").Miscellaneous.Bonfire.Sword:FindFirstChild("ProximityPrompt") then
                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Miscellaneous.Bonfire:FindFirstChild("Sword").CFrame
@@ -211,9 +208,8 @@ end)
 
 Farms:NewToggle("Auto Black Silence", "Auto Black Silence", function(state)
     getgenv().TP = state
-    while getgenv().TP == true do
+    while getgenv().TP == true and task.wait() do
         pcall(function()
-            task.wait()
             for i,v in pairs(game:GetService("Workspace").Miscellaneous:GetChildren()) do
                 if v:FindFirstChild("Whispers") then
                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
