@@ -38,6 +38,23 @@ task.spawn(function()
         Text = "Discord prompted and copied to clipboard"
         })
     end
+    
+    local is_exploit_function = is_synapse_function or isexecutorclosure
+    
+    for i,v in ipairs(getgc()) do
+        if type(v) == "function" and not is_exploit_function(v) and islclosure(v) then
+            local consts = getconstants(v)
+            
+            if getfenv(v).script == game.Players.LocalPlayer.PlayerScripts.ClientFunctions and table.find(consts, "LocalPlayer") then
+                local oldHook
+                oldHook = hookfunction(v, function(...)
+                   local args = {...}
+                   if nostun then return task.wait(math.huge) end
+                   return oldHook(unpack(args))
+                end)
+            end
+        end
+    end
 end)
 
 Combat:NewToggle("Inf Dozerify", "Inf Dozerify", function(state)
@@ -70,6 +87,10 @@ Combat:NewToggle("Inf Russian Vitamins", "Inf Russian Vitamins", function(state)
             end
         end)
     end
+end)
+
+Combat:NewToggle("Anti Ragdoll","Anti Ragdoll",function(state)
+    getgenv().nostun = state
 end)
 
 Combat:NewToggle("Inf Candy Bag Buffs", "Inf Candy Bag Buffs", function(state)
