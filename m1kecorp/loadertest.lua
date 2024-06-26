@@ -16,7 +16,7 @@ if game.PlaceId == 4282985734 or game.PlaceId == 11979315221 and hookfunction th
                     })
                 end
         
-                hookfunction(getrenv().require, oRequire) --restorefunction()
+                hookfunction(getrenv().require, oRequire)
             end
         
             return moduleData
